@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AromaSample_Render_Initialize", "AromaSample_Render_Initialize.vcxproj", "{44956C9A-3537-4A2F-904F-F0A7005FF2FD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B07826DA-0C93-4EDA-9C93-9188A25D6223} = {B07826DA-0C93-4EDA-9C93-9188A25D6223}
+		{A60498FE-8F0F-4646-9617-10F34608116D} = {A60498FE-8F0F-4646-9617-10F34608116D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Aroma", "..\..\Aroma\Aroma.vcxproj", "{A60498FE-8F0F-4646-9617-10F34608116D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AromaSampleShader", "..\common\AromaSampleShader\AromaSampleShader.vcxproj", "{B07826DA-0C93-4EDA-9C93-9188A25D6223}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_DX11|x64 = Debug_DX11|x64
+		Debug_DX11|x86 = Debug_DX11|x86
+		Release_DX11|x64 = Release_DX11|x64
+		Release_DX11|x86 = Release_DX11|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44956C9A-3537-4A2F-904F-F0A7005FF2FD}.Debug_DX11|x64.ActiveCfg = Debug_DX11|x64
+		{44956C9A-3537-4A2F-904F-F0A7005FF2FD}.Debug_DX11|x64.Build.0 = Debug_DX11|x64
+		{44956C9A-3537-4A2F-904F-F0A7005FF2FD}.Debug_DX11|x86.ActiveCfg = Debug_DX11|Win32
+		{44956C9A-3537-4A2F-904F-F0A7005FF2FD}.Debug_DX11|x86.Build.0 = Debug_DX11|Win32
+		{44956C9A-3537-4A2F-904F-F0A7005FF2FD}.Release_DX11|x64.ActiveCfg = Release_DX11|x64
+		{44956C9A-3537-4A2F-904F-F0A7005FF2FD}.Release_DX11|x64.Build.0 = Release_DX11|x64
+		{44956C9A-3537-4A2F-904F-F0A7005FF2FD}.Release_DX11|x86.ActiveCfg = Release_DX11|Win32
+		{44956C9A-3537-4A2F-904F-F0A7005FF2FD}.Release_DX11|x86.Build.0 = Release_DX11|Win32
+		{A60498FE-8F0F-4646-9617-10F34608116D}.Debug_DX11|x64.ActiveCfg = Debug_DX11|x64
+		{A60498FE-8F0F-4646-9617-10F34608116D}.Debug_DX11|x64.Build.0 = Debug_DX11|x64
+		{A60498FE-8F0F-4646-9617-10F34608116D}.Debug_DX11|x86.ActiveCfg = Debug_DX11|Win32
+		{A60498FE-8F0F-4646-9617-10F34608116D}.Debug_DX11|x86.Build.0 = Debug_DX11|Win32
+		{A60498FE-8F0F-4646-9617-10F34608116D}.Release_DX11|x64.ActiveCfg = Release_DX11|x64
+		{A60498FE-8F0F-4646-9617-10F34608116D}.Release_DX11|x64.Build.0 = Release_DX11|x64
+		{A60498FE-8F0F-4646-9617-10F34608116D}.Release_DX11|x86.ActiveCfg = Release_DX11|Win32
+		{A60498FE-8F0F-4646-9617-10F34608116D}.Release_DX11|x86.Build.0 = Release_DX11|Win32
+		{B07826DA-0C93-4EDA-9C93-9188A25D6223}.Debug_DX11|x64.ActiveCfg = Debug_DX11|x64
+		{B07826DA-0C93-4EDA-9C93-9188A25D6223}.Debug_DX11|x64.Build.0 = Debug_DX11|x64
+		{B07826DA-0C93-4EDA-9C93-9188A25D6223}.Debug_DX11|x86.ActiveCfg = Debug_DX11|Win32
+		{B07826DA-0C93-4EDA-9C93-9188A25D6223}.Debug_DX11|x86.Build.0 = Debug_DX11|Win32
+		{B07826DA-0C93-4EDA-9C93-9188A25D6223}.Release_DX11|x64.ActiveCfg = Release_DX11|x64
+		{B07826DA-0C93-4EDA-9C93-9188A25D6223}.Release_DX11|x64.Build.0 = Release_DX11|x64
+		{B07826DA-0C93-4EDA-9C93-9188A25D6223}.Release_DX11|x86.ActiveCfg = Release_DX11|Win32
+		{B07826DA-0C93-4EDA-9C93-9188A25D6223}.Release_DX11|x86.Build.0 = Release_DX11|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

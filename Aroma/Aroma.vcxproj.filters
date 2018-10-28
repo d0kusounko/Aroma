@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="source\render">
+      <UniqueIdentifier>{0821b2e3-4be4-4a7c-ad66-75fd9c8ea38d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="source\app">
+      <UniqueIdentifier>{df5abf65-3ae1-4d46-b48e-e54c5c1c851e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\debug">
+      <UniqueIdentifier>{c7fae73b-e9f8-46ec-a865-3a099aee536e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\aroma">
+      <UniqueIdentifier>{a6b255cb-fa49-4a75-876b-3045ad4e5239}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\aroma\app">
+      <UniqueIdentifier>{83f82f32-fa51-426f-a025-27c4ac9941b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\aroma\debug">
+      <UniqueIdentifier>{f6543875-c196-4332-beee-8f89684b153f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\aroma\memory">
+      <UniqueIdentifier>{a1c1d950-bca7-45db-84e9-9e7a5e905f16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\aroma\util">
+      <UniqueIdentifier>{415d88ee-4673-4111-9d7c-61b66b3326f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\aroma\render">
+      <UniqueIdentifier>{452c17f8-8726-4b53-98d8-92ee0a26efc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\aroma\data">
+      <UniqueIdentifier>{34adfa83-a49c-4b63-b9e0-19fdb5504fca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\util">
+      <UniqueIdentifier>{703f7c96-a678-409b-a055-9f8ddb592c23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\data">
+      <UniqueIdentifier>{09cb8fa7-f88c-494b-8d08-4420feedda3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\aroma\common">
+      <UniqueIdentifier>{992ffdce-c8dc-4131-b53c-5c2c60eee77e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\common">
+      <UniqueIdentifier>{f002719e-077b-4ddf-80ab-501c7d56dd39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\file">
+      <UniqueIdentifier>{2b29c017-56d3-42f1-8901-997526e74dc2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\render\Render.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\app\App_Win.cpp">
+      <Filter>source\app</Filter>
+    </ClCompile>
+    <ClCompile Include="source\debug\Debug_Win.cpp">
+      <Filter>source\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\Device_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\MemoryAllocator.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\SwapChain_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\RenderDef_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\Resource_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\Texture_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\TextureView_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\CommandList_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\DeferredContext_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\util\Singleton.cpp">
+      <Filter>source\util</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\Buffer_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\Shader_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\InputLayout_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\RenderStateCache_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\data\CRC.cpp">
+      <Filter>source\data</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\BlendState.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\RasterizerState.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\DepthStencilState.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\data\String.cpp">
+      <Filter>source\data</Filter>
+    </ClCompile>
+    <ClCompile Include="source\data\DDS.cpp">
+      <Filter>source\data</Filter>
+    </ClCompile>
+    <ClCompile Include="source\file\FileIO_Win.cpp">
+      <Filter>source\file</Filter>
+    </ClCompile>
+    <ClCompile Include="source\common\RefObject.cpp">
+      <Filter>source\common</Filter>
+    </ClCompile>
+    <ClCompile Include="source\common\SyncObject.cpp">
+      <Filter>source\common</Filter>
+    </ClCompile>
+    <ClCompile Include="source\data\DataDef.cpp">
+      <Filter>source\data</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\SamplerState.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Aroma.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\Pch.h">
+      <Filter>include\aroma</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\app\App.h">
+      <Filter>include\aroma\app</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\debug\Assert.h">
+      <Filter>include\aroma\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\debug\Debug.h">
+      <Filter>include\aroma\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\Device.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\Render.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\memory\Allocator.h">
+      <Filter>include\aroma\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\MemoryAllocator.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\SwapChain.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\RenderDef.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\data\DataDef.h">
+      <Filter>include\aroma\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\Resource.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\Texture.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\TextureView.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\util\NonCopyable.h">
+      <Filter>include\aroma\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\CommandList.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\data\Color.h">
+      <Filter>include\aroma\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\DeferredContext.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\util\Singleton.h">
+      <Filter>include\aroma\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\Buffer.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\Shader.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\InputLayout.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\RenderStateCache.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\data\CRC.h">
+      <Filter>include\aroma\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\BlendState.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\RasterizerState.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\DepthStencilState.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\file\FileIO.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\data\String.h">
+      <Filter>include\aroma\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\data\DDS.h">
+      <Filter>include\aroma\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\common\Algorithm.h">
+      <Filter>include\aroma\common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\common\Alignment.h">
+      <Filter>include\aroma\common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\common\Endian.h">
+      <Filter>include\aroma\common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\common\FixedArray.h">
+      <Filter>include\aroma\common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\common\Macro.h">
+      <Filter>include\aroma\common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\common\RefObject.h">
+      <Filter>include\aroma\common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\common\ScopedPtr.h">
+      <Filter>include\aroma\common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\common\SyncObject.h">
+      <Filter>include\aroma\common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\common\Typedef.h">
+      <Filter>include\aroma\common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\data\FixedArray.h">
+      <Filter>include\aroma\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\common\BitFlag.h">
+      <Filter>include\aroma\common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\SamplerState.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

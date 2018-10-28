@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="shader">
+      <UniqueIdentifier>{74b48c21-3650-41c6-8dc8-e095def5fd56}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader\VsSimple.hlsl">
+      <Filter>shader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="shader\PsSimple.hlsl">
+      <Filter>shader</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ImportGroup Label="PropertySheets" />
+
+	<!-- シェーダーコンパイルバイナリ格納パス. -->
+	<PropertyGroup Label="UserMacros" Condition="'$(PlatformTarget)'=='x64'">
+		<AromaShaderCompilerPath>$(WindowsSDK_ExecutablePath_x64)</AromaShaderCompilerPath>
+	</PropertyGroup>
+	<PropertyGroup />
+
+	<PropertyGroup Label="UserMacros" Condition="'$(PlatformTarget)'=='x86'">
+		<AromaShaderCompilerPath>$(WindowsSDK_ExecutablePath_x86)</AromaShaderCompilerPath>
+	</PropertyGroup>
+	<PropertyGroup />
+
+	<!-- グラフィックスAPI定義. -->
+	<ItemDefinitionGroup Condition="'$(Configuration)'=='Debug_DX11'">
+		<ClCompile>
+			<PreprocessorDefinitions>AROMA_RENDER_DX11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
+	</ItemDefinitionGroup>
+
+	<ItemDefinitionGroup Condition="'$(Configuration)'=='Release_DX11'">
+		<ClCompile>
+			<PreprocessorDefinitions>AROMA_RENDER_DX11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
+	</ItemDefinitionGroup>
+
+</Project>
