@@ -9,10 +9,9 @@
 //===========================================================================
 #pragma once
 
-namespace aroma
-{
-namespace debug
-{
+namespace aroma {
+namespace debug {
+
 #ifdef AROMA_DEBUG
 void StringOut( CTStr format, ... );
 #endif
@@ -24,7 +23,7 @@ void StringOut( CTStr format, ... );
 //!	@brief		デバッグ文字列出力.
 //!--------------------------------------------------------------------------
 #ifdef AROMA_DEBUG
-#define AROMA_DEBUG_OUT( format, ... )	aroma::debug::StringOut( format, __VA_ARGS__ )
+#define AROMA_DEBUG_OUT( ... )	aroma::debug::StringOut( __VA_ARGS__ )
 #else
-#define AROMA_DEBUG_OUT( format, ... )
+#define AROMA_DEBUG_OUT( ... )
 #endif

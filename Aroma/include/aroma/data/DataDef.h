@@ -20,7 +20,7 @@ namespace data {
 template < s32 c0, s32 c1, s32 c2, s32 c3 >
 struct FourCC
 {
-    static constexpr u32 value = (c3 << 24) | (c2 << 16) | (c1 << 8) | (c0 << 0);
+	static constexpr u32 value = (c3 << 24) | (c2 << 16) | (c1 << 8) | (c0 << 0);
 };
 
 //---------------------------------------------------------------------------
@@ -189,7 +189,7 @@ struct SurfaceInfo
 //!	@param[in]	h		イメージの高さ.
 //!	@param[in]	format	ピクセルフォーマット.
 //---------------------------------------------------------------------------
- void CalcSurfaceInfo( SurfaceInfo* outInfo, s32 w, s32 h, PixelFormat format );
+void CalcSurfaceInfo( SurfaceInfo* outInfo, s32 w, s32 h, PixelFormat format );
 
 } // namespace data
 } // namespace aroma

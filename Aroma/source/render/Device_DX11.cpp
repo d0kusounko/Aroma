@@ -262,7 +262,7 @@ Texture* Device::CreateTexture2DFromDDS( const data::DDSAccessor& dds, Usage usa
 	if( !dds.IsValid() )
 	{
 		AROMA_ASSERT( false, "Invalid DDS data." );
-		return false;
+		return nullptr;
 	}
 
 	// パラメータ取得.

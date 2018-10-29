@@ -91,8 +91,8 @@ using CTStr		= const char*;
 //! @brief		静的配列の要素数取得マクロ.
 //---------------------------------------------------------------------------
 template< size_t size > struct aroma_elementsof_t { typedef aroma::sint8	type[size]; };
-template< typename element_type, size_t size > typename aroma_elementsof_t<size>::type& AROMA_ARRAY_OF(element_type(&)[size]);
-#define AROMA_ARRAY_OF( _array ) sizeof( AROMA_ARRAY_OF( _array ) )
+template< typename element_type, size_t size > typename aroma_elementsof_t<size>::type& aroma_array_of(element_type(&)[size]);
+#define AROMA_ARRAY_OF( _array ) sizeof( aroma_array_of( _array ) )
 
 
 //! @}

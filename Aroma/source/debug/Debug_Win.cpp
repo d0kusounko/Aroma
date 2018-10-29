@@ -7,15 +7,16 @@
 //!	@author		d0
 //!
 //===========================================================================
+#ifdef AROMA_WINDOWS
+#ifdef AROMA_DEBUG
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <aroma/debug/Debug.h>
 
-namespace aroma
-{
-namespace debug
-{
-#ifdef AROMA_DEBUG
+namespace aroma {
+namespace debug {
+
 //===========================================================================
 //!	@brief		デバッグ文字列出力.
 //===========================================================================
@@ -31,8 +32,9 @@ void StringOut( CTStr format, ... )
 
 	OutputDebugString( tempStr );
 }
-#endif
 
 } // namespace debug
-
 } // namespace aroma
+
+#endif
+#endif
