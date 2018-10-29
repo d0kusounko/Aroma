@@ -11,7 +11,7 @@
 
 #include "../debug/Assert.h"
 
-#ifdef AROMA_WINDOWS
+#if defined( AROMA_WINDOWS )
 
 #define AROMA_ALIGN32_BEGIN		__declspec( align(32) )
 #define AROMA_ALIGN32_END
@@ -22,7 +22,18 @@
 #define AROMA_ALIGN4_BEGIN		__declspec( align( 4) )
 #define AROMA_ALIGN4_END
 
-#elif 0
+#elif defined( AROMA_NX )
+
+#define AROMA_ALIGN32_BEGIN		__attribute__( aligned(32) )
+#define AROMA_ALIGN32_END
+#define AROMA_ALIGN16_BEGIN		__attribute__( aligned(16) )
+#define AROMA_ALIGN16_END
+#define AROMA_ALIGN8_BEGIN		__attribute__( aligned( 8) )
+#define AROMA_ALIGN8_END
+#define AROMA_ALIGN4_BEGIN		__attribute__( aligned( 4) )
+#define AROMA_ALIGN4_END
+
+#else
 
 #define AROMA_ALIGN32_BEGIN
 #define AROMA_ALIGN32_END		__attribute__( aligned(32) )

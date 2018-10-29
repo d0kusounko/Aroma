@@ -278,7 +278,7 @@ enum class DDSResourceType : u32
 //---------------------------------------------------------------------------
 //! @brief	DDSピクセルフォーマット.
 //---------------------------------------------------------------------------
-AROMA_ALIGN4_BEGIN struct DDSPixelFormat
+struct AROMA_ALIGN4_BEGIN DDSPixelFormat
 {
 	LE<u32>				dwPfSize;				//!< ピクセルフォーマット(当構造体)サイズ : 32Byte固定.
 	LE<u32>				dwPfFlags;				//!< ピクセルフォーマットフラグ : DDSPixelFormatFlagの組み合わせ.
@@ -294,7 +294,7 @@ AROMA_ALIGN4_BEGIN struct DDSPixelFormat
 //---------------------------------------------------------------------------
 //! @brief	DDSファイルヘッダー.
 //---------------------------------------------------------------------------
-AROMA_ALIGN4_BEGIN struct DDSHeader
+struct AROMA_ALIGN4_BEGIN DDSHeader
 {
 	LE<u32>			dwMagic;				//!< マジック値 : 0x20534444 ' SDD'.
 	LE<u32>			dwSize;					//!< dwMagicを除いた当ヘッダーのサイズ : 124Byte固定.
@@ -317,7 +317,7 @@ AROMA_ALIGN4_BEGIN struct DDSHeader
 //---------------------------------------------------------------------------
 //! @brief	DDSファイルヘッダー DX10拡張分.
 //---------------------------------------------------------------------------
-AROMA_ALIGN4_BEGIN struct DDSHeaderDX10
+struct AROMA_ALIGN4_BEGIN DDSHeaderDX10
 {
 	LE<DDSDXGIFormat>	dxgiFormat;		//!< DDSファイルフォーマットID.
 	LE<DDSResourceType>	resourceType;	//!< リソースの種類.
