@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\app\App_Win.cpp" />
+    <ClCompile Include="source\app\Window_Win.cpp" />
     <ClCompile Include="source\common\RefObject.cpp" />
     <ClCompile Include="source\common\SyncObject.cpp" />
     <ClCompile Include="source\data\CRC.cpp" />
@@ -189,6 +190,7 @@
   <ItemGroup>
     <ClInclude Include="include\Aroma.h" />
     <ClInclude Include="include\aroma\app\App.h" />
+    <ClInclude Include="include\aroma\app\Window.h" />
     <ClInclude Include="include\aroma\common\Algorithm.h" />
     <ClInclude Include="include\aroma\common\Alignment.h" />
     <ClInclude Include="include\aroma\common\BitFlag.h" />

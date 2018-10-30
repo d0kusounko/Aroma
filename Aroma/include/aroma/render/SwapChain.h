@@ -14,7 +14,7 @@
 #include "../common/RefObject.h"
 #include "../util/NonCopyable.h"
 #include "../data/DataDef.h"
-#include "../app/App.h"
+#include "../app/Window.h"
 
 namespace aroma {
 namespace render {
@@ -37,7 +37,7 @@ public:
 		data::ImageSize		size;			//!< バッファ画素数.
 		data::PixelFormat	format;			//!< バッファフォーマット.
 		u32					bufferCount;	//!< バッファ数.
-		app::WindowHandle	windowHandle;	//!< ウィンドウハンドル.
+		app::Window*		window;			//!< 表示先ウィンドウ.
 		//-------------------------------------------------------------------
 		Desc(){ Default(); }
 		void Default()
@@ -46,7 +46,7 @@ public:
 			size.height		= 0;
 			format			= data::PixelFormat::kR8G8B8A8Unorm;
 			bufferCount		= 2;
-			windowHandle	= app::kWindowHandleInvalid;
+			window			= nullptr;
 		}
 	};
 

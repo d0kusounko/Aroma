@@ -122,7 +122,7 @@ namespace
 		kNum
 	};
 
-	app::WindowHandle			g_windowHandle		= nullptr;
+	app::Window*				g_window			= nullptr;
 	u32							g_bufferingIndex	= 0;
 	render::Device*				g_device			= nullptr;
 	render::SwapChain*			g_swapChain			= nullptr;
@@ -156,6 +156,16 @@ namespace
 	void UpdateDoudesukaShake();
 }
 
+// Test.
+void TestCallback( const void* messageParam, void* userParam )
+{
+	auto param = static_cast< const app::WindowMessageCallbackParamSize* >( messageParam );
+	if( param )
+	{
+		AROMA_DEBUG_OUT( "type = %d, x = %d, y = %d\n", ( s32 )param->action, param->size.width, param->size.height );
+	}
+}
+
 //---------------------------------------------------------------------------
 //!	@brief		メインエントリ.
 //---------------------------------------------------------------------------
@@ -165,11 +175,21 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	// ウィンドウの作成.
 	{
-		app::CreateAppWindowConfig config;
+		app::Window::CreateConfig config;
 		config.windowTitle	= _T( "AromaSample Render Initialize" );
 		config.size			= kSampleScreenSize;
-
-		g_windowHandle = app::CreateAppWindow( config );
+		config.callbacks[ ( u32 )app::WindowMessage::kSize ].func = TestCallback;
+		g_window			= app::Window::Create( config );
+	}
+	
+	app::Window* testWindow = nullptr;
+	// ウィンドウの作成.
+	{
+		app::Window::CreateConfig config;
+		config.windowTitle	= _T( "Test 2" );
+		config.size			= kSampleScreenSize;
+		config.callbacks[ ( u32 )app::WindowMessage::kSize ].func = TestCallback;
+		testWindow			= app::Window::Create( config );
 	}
 
 	// 描画システム初期化.
@@ -196,7 +216,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		desc.size.width		= kSampleScreenSize.width;
 		desc.size.height	= kSampleScreenSize.height;
 		desc.bufferCount	= kSwapChainBufferNum;
-		desc.windowHandle	= g_windowHandle;
+		desc.window			= g_window;
 		g_swapChain = g_device->CreateSwapChain( desc );
 
 		for( u32 i = 0; i < kSwapChainBufferNum; ++i )
@@ -291,18 +311,12 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	}
 
 	u32 frame = 0;
-	MSG msg;
 	g_updateFunc = UpdateInitialize;
 
     while( true )
 	{
-		// メッセージを取り出して, ウィンドウプロシージャに渡している.
-		if ( PeekMessage( &msg, nullptr, 0, 0, PM_REMOVE ) != 0 )
-		{
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
-		}
-		if( msg.message == WM_QUIT )
+		app::ProcessMessage();
+		if( app::IsQuit() || frame >= 300 )
 		{
 			break;
 		}
@@ -338,8 +352,10 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	memory::SafeRelease( g_context );
 	memory::SafeRelease( g_swapChain );
 	memory::SafeRelease( g_device );
-
 	render::Finalize();
+	
+	memory::SafeRelease( testWindow );
+	memory::SafeRelease( g_window );
 
 	return 0;
 }
@@ -384,7 +400,7 @@ void UpdateBlackBG()
 		g_updateFunc = UpdateHirokunAppear;
 
 		// ウィンドウタイトル変更.
-		app::SetWindowTitle( g_windowHandle, _T( "おわいハウスへおいでよ　家賃１万円でしかもDirectX11までできてしまう" ) );
+		g_window->SetWindowTitle( _T( "おわいハウスへおいでよ　家賃１万円でしかもDirectX11までできてしまう" ) );
 	}
 }
 
@@ -553,9 +569,10 @@ void Draw()
 		g_context->PSSetConstantBuffer( 0, g_constBuffer[ g_bufferingIndex ] );
 
 		// スプライト描画.
-		for( u32 i = 0; i < ( u32 )SampleSprite::kNum; ++i )
+		for( auto& sprite : g_sprite )
 		{
-			if( g_sprite[ i ]->visible ) DrawSprite( g_context, g_sprite[ i ] );
+			if( !sprite ) continue;
+			if( sprite->visible ) DrawSprite( g_context, sprite );
 		}
 	}
 	render::CommandList* commandList;

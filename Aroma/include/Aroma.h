@@ -25,6 +25,7 @@
 
 // app includes
 #include "aroma/app/App.h"
+#include "aroma/app/Window.h"
 
 // debug includes
 #include "aroma/debug/Assert.h"

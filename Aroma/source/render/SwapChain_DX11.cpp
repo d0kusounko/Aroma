@@ -53,6 +53,7 @@ void SwapChain::Initialize( Device* device, const Desc& desc )
 	_device = device;
 	_device->AddRef();
 	_desc = desc;
+	_desc.window->AddRef();
 
 	auto d3dDevice	= _device->GetNativeDevice();
 	auto d3dFactory	= _device->GetDXGIFactory();
@@ -69,7 +70,7 @@ void SwapChain::Initialize( Device* device, const Desc& desc )
         d3dDesc.BufferUsage			= DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
         d3dDesc.BufferCount			= desc.bufferCount;
         d3dDesc.Windowed			= TRUE;	// TODO: フルスクリーン対応.
-        d3dDesc.OutputWindow		= app::ToNativeWindowHandle( desc.windowHandle );
+        d3dDesc.OutputWindow		= desc.window->GetNativeHandle();
         // d3dDesc.Flags			= DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
         d3dDesc.Flags				= DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;	// TODO: フルスクリーン対応.
 		d3dDesc.SwapEffect			= DXGI_SWAP_EFFECT_DISCARD;
@@ -131,6 +132,7 @@ void SwapChain::Finalize()
 	memory::SafeDelete( _buffers );
 	memory::SafeRelease( _d3dSwapChain );
 	memory::SafeRelease( _device );
+	memory::SafeRelease( _desc.window );
 	_desc.Default();
 
 	_initialized = false;

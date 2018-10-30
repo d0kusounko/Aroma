@@ -143,6 +143,9 @@
     <ClCompile Include="source\Pch.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="source\app\Window_Win.cpp">
+      <Filter>source\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Aroma.h">
@@ -273,6 +276,9 @@
     </ClInclude>
     <ClInclude Include="include\aroma\render\SamplerState.h">
       <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\app\Window.h">
+      <Filter>include\aroma\app</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
