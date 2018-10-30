@@ -35,7 +35,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wp, LPARAM lp )
 				// コールバック.
 				callback->func( nullptr, callback->userParam );
 			}
-			PostQuitMessage( 0 );	// TODO: ユーザー任意で終了するかどうか変更可能にする.
+
+			if( CheckFlags( window->GetFlags(), kWindowFlagDestroyPostQuit ) )
+			{
+				// アプリ終了メッセージを送出.
+				PostQuitMessage( 0 );
+			}
 			break;
 		}
 
@@ -48,8 +53,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wp, LPARAM lp )
 				// コールバック.
 				callback->func( nullptr, callback->userParam );
 			}
-
-			window->Destory();		// TODO: ユーザー任意で削除するかどうか変更可能にする.
+			
+			if( !CheckFlags( window->GetFlags(), kWindowFlagCloseMessageNotDestory ) )
+			{
+				// ウィンドウを削除.
+				window->Destory();
+			}
 			return 0;
 		}
 
@@ -162,11 +171,11 @@ Window* Window::Create( const CreateConfig& config )
 	Window* window = new Window( hWnd );
 	{
 		// パラメータ保存.
-
 		for( u32 i = 0; i < ( u32 )WindowMessage::kNum; ++i )
 		{
 			window->_callbacks[ i ] = config.callbacks[ i ];
 		}
+		window->_flags = config.flags;
 	}
 
 	// ウィンドウ表示.
@@ -185,6 +194,7 @@ Window* Window::Create( const CreateConfig& config )
 //---------------------------------------------------------------------------
 Window::Window( HWND wHnd )
 	: _nativeWindowHandle( wHnd )
+	, _flags( 0 )
 {
 	// ウィンドウマネージャーに登録.
 	WindowManager::RegisterWindow( _nativeWindowHandle, this );
@@ -199,11 +209,20 @@ Window::~Window()
 }
 
 //---------------------------------------------------------------------------
-//	ネイティブAPIウィンドウハンドルの取得.
+//	ウィンドウを削除.
 //---------------------------------------------------------------------------
-HWND Window::GetNativeHandle()
+void Window::Destory()
 {
-	return _nativeWindowHandle;
+	if( _nativeWindowHandle )
+	{
+		DestroyWindow( _nativeWindowHandle );
+		UpdateWindow( _nativeWindowHandle );
+
+		// ウィンドウマネージャーから解除.
+		WindowManager::UnregisterWindow( _nativeWindowHandle );
+
+		_nativeWindowHandle = NULL;
+	}
 }
 
 //---------------------------------------------------------------------------
@@ -227,22 +246,20 @@ const WindowMessageCallback* Window::GetMessageCallback( WindowMessage msg ) con
 	return nullptr;
 }
 
-
 //---------------------------------------------------------------------------
-//	ウィンドウを削除.
+//	ウィンドウコールバック設定フラグ取得.
 //---------------------------------------------------------------------------
-void Window::Destory()
+u32 Window::GetFlags() const
 {
-	if( _nativeWindowHandle )
-	{
-		DestroyWindow( _nativeWindowHandle );
-		UpdateWindow( _nativeWindowHandle );
+	return _flags;
+}
 
-		// ウィンドウマネージャーから解除.
-		WindowManager::UnregisterWindow( _nativeWindowHandle );
-
-		_nativeWindowHandle = NULL;
-	}
+//---------------------------------------------------------------------------
+//	ネイティブAPIウィンドウハンドルの取得.
+//---------------------------------------------------------------------------
+HWND Window::GetNativeHandle()
+{
+	return _nativeWindowHandle;
 }
 
 //---------------------------------------------------------------------------

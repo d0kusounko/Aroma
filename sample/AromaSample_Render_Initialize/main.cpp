@@ -156,7 +156,7 @@ namespace
 	void UpdateDoudesukaShake();
 }
 
-// Test.
+// TODO: ウィンドウリサイズコールバックテスト　あとで消す.
 void TestCallback( const void* messageParam, void* userParam )
 {
 	auto param = static_cast< const app::WindowMessageCallbackParamSize* >( messageParam );
@@ -179,16 +179,20 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		config.windowTitle	= _T( "AromaSample Render Initialize" );
 		config.size			= kSampleScreenSize;
 		config.callbacks[ ( u32 )app::WindowMessage::kSize ].func = TestCallback;
+		OnFlags( config.flags, app::kWindowFlagDestroyPostQuit );
 		g_window			= app::Window::Create( config );
 	}
 	
+	// TODO: あとで消す.
+	// ダミーウィンドウ作成.
 	app::Window* testWindow = nullptr;
-	// ウィンドウの作成.
 	{
 		app::Window::CreateConfig config;
-		config.windowTitle	= _T( "Test 2" );
-		config.size			= kSampleScreenSize;
+		config.windowTitle	= _T( "Dummy" );
+		config.size.width	= 320;
+		config.size.height	= 160;
 		config.callbacks[ ( u32 )app::WindowMessage::kSize ].func = TestCallback;
+		OnFlags( config.flags, app::kWindowFlagCloseMessageNotDestory );
 		testWindow			= app::Window::Create( config );
 	}
 
@@ -316,7 +320,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
     while( true )
 	{
 		app::ProcessMessage();
-		if( app::IsQuit() || frame >= 300 )
+		if( app::IsQuit() )
 		{
 			break;
 		}
@@ -354,7 +358,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	memory::SafeRelease( g_device );
 	render::Finalize();
 	
-	memory::SafeRelease( testWindow );
+	memory::SafeRelease( testWindow );	// TODO: あとで消す.
 	memory::SafeRelease( g_window );
 
 	return 0;

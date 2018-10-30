@@ -32,22 +32,6 @@ class WindowManager;
 using WindowMessageCallbackFunc  = std::function< void( const void* messageParam, void* userParam ) >;
 
 //---------------------------------------------------------------------------
-//!	@brief		ウィンドウメッセージコールバック.
-//---------------------------------------------------------------------------
-struct WindowMessageCallback
-{
-	WindowMessageCallbackFunc	func;		//!< コールバック関数.
-	void*						userParam;	//!< コールバック時に呼ばれる任意データ.
-
-	WindowMessageCallback& operator=( const WindowMessageCallback& rhs )
-	{
-		func		= rhs.func;
-		userParam	= rhs.userParam;
-		return *this;
-	}
-};
-
-//---------------------------------------------------------------------------
 //!	@brief		ウィンドウメッセージ.
 //---------------------------------------------------------------------------
 enum class WindowMessage
@@ -72,6 +56,35 @@ enum class WindowSizeAction
 };
 
 //---------------------------------------------------------------------------
+//!	@brief		ウィンドウ設定フラグ.
+//---------------------------------------------------------------------------
+enum WindowFlag : u32
+{
+	//! ウィンドウ消去時にアプリ終了のメッセージを送出.
+	kWindowFlagDestroyPostQuit			= Bit32( 0 ),
+
+	//! 閉じるメッセージを受信してもウィンドウを消去しない.
+	kWindowFlagCloseMessageNotDestory	= Bit32( 1 ),
+};
+
+//---------------------------------------------------------------------------
+//!	@brief		ウィンドウメッセージコールバック.
+//---------------------------------------------------------------------------
+struct WindowMessageCallback
+{
+	WindowMessageCallbackFunc	func;		//!< コールバック関数.
+	void*						userParam;	//!< コールバック時に呼ばれる任意データ.
+
+	WindowMessageCallback& operator=( const WindowMessageCallback& rhs )
+	{
+		func		= rhs.func;
+		userParam	= rhs.userParam;
+		return *this;
+	}
+};
+
+
+//---------------------------------------------------------------------------
 //!	@name		ウィンドウメッセージ別コールバックパラメータ.
 //---------------------------------------------------------------------------
 // @{
@@ -93,15 +106,22 @@ class Window final : public RefObject, private util::NonCopyable< Window >
 public:
 	//-----------------------------------------------------------------------
 	//!	@brief		ウィンドウ作成設定.
+	//!
+	//! @param		windowTitle	ウィンドウタイトル.
+	//! @param		size		ウィンドウサイズ.
+	//! @param		callbacks	メッセージコールバック.
+	//! @param		flags		設定フラグ : WindowFlag の組み合わせ.
 	//-----------------------------------------------------------------------
 	struct CreateConfig
 	{
-		CTStr					windowTitle;		//!< ウィンドウタイトル.
-		data::ImageSize			size;				//!< ウィンドウサイズ.
-		WindowMessageCallback	callbacks[ ( u32 )( WindowMessage::kNum ) ]; //!< メッセージコールバック.
+		CTStr					windowTitle;
+		data::ImageSize			size;
+		WindowMessageCallback	callbacks[ ( u32 )( WindowMessage::kNum ) ];
+		u32						flags;
 		//--------------------------
 		CreateConfig()
 			: windowTitle( nullptr )
+			, flags( 0 )
 		{
 			for( auto& callback : callbacks )
 			{
@@ -115,6 +135,11 @@ public:
 	//!	@brief		ウィンドウの作成.
 	//-----------------------------------------------------------------------
 	static Window* Create( const CreateConfig& config );
+	
+	//---------------------------------------------------------------------------
+	//!	@brief		ウィンドウを削除.
+	//---------------------------------------------------------------------------
+	void Destory();
 
 	//---------------------------------------------------------------------------
 	//!	@brief		ウィンドウのタイトル設定.
@@ -127,9 +152,9 @@ public:
 	const WindowMessageCallback* GetMessageCallback( WindowMessage msg ) const;
 
 	//---------------------------------------------------------------------------
-	//!	@brief		ウィンドウを削除.
+	//!	@brief		ウィンドウ設定フラグ取得.
 	//---------------------------------------------------------------------------
-	void Destory();
+	u32 GetFlags() const;
 
 	//---------------------------------------------------------------------------
 	//!	@brief		ネイティブAPIウィンドウハンドルの取得.
@@ -149,6 +174,7 @@ private:
 	HWND _nativeWindowHandle;
 #endif
 	WindowMessageCallback	_callbacks[ static_cast< u32 >( WindowMessage::kNum ) ];
+	u32						_flags;
 };
 
 class WindowManager final : private util::NonCopyable< Window >
