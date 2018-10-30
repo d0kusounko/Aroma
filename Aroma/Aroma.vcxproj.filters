@@ -140,6 +140,9 @@
     <ClCompile Include="source\render\SamplerState.cpp">
       <Filter>source\render</Filter>
     </ClCompile>
+    <ClCompile Include="source\Pch.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Aroma.h">
