@@ -182,7 +182,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		OnFlags( config.flags, app::kWindowFlagDestroyPostQuit );
 		g_window			= app::Window::Create( config );
 	}
-	
+
 	// TODO: あとで消す.
 	// ダミーウィンドウ作成.
 	app::Window* testWindow = nullptr;

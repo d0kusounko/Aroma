@@ -555,11 +555,11 @@ D3D11_TEXTURE_ADDRESS_MODE ToNativeTextureAddress( TextureAddress aromaTextureAd
 {
 	constexpr D3D11_TEXTURE_ADDRESS_MODE nativeTextureAddresses[] =
 	{
-        D3D11_TEXTURE_ADDRESS_WRAP,			//!< kWrap
-        D3D11_TEXTURE_ADDRESS_MIRROR,		//!< kMirror
-        D3D11_TEXTURE_ADDRESS_CLAMP,		//!< kClamp
-        D3D11_TEXTURE_ADDRESS_BORDER,		//!< kBorder
-        D3D11_TEXTURE_ADDRESS_MIRROR_ONCE,	//!< kMirrorOnce
+		D3D11_TEXTURE_ADDRESS_WRAP,			//!< kWrap
+		D3D11_TEXTURE_ADDRESS_MIRROR,		//!< kMirror
+		D3D11_TEXTURE_ADDRESS_CLAMP,		//!< kClamp
+		D3D11_TEXTURE_ADDRESS_BORDER,		//!< kBorder
+		D3D11_TEXTURE_ADDRESS_MIRROR_ONCE,	//!< kMirrorOnce
 	};
 	AROMA_STATIC_ASSERT( AROMA_ARRAY_OF( nativeTextureAddresses ) == ( u32 )TextureAddress::kNum, _T( "Array length mismatch." ));
 	return nativeTextureAddresses[ ( u32 )aromaTextureAddress ];

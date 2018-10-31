@@ -13,7 +13,6 @@
 #include <aroma/render/Device.h>
 #include <aroma/render/Texture.h>
 #include <aroma/render/TextureView.h>
-#include <aroma/app/App.h>
 
 namespace aroma {
 namespace render {
@@ -321,7 +320,7 @@ NativeDepthStencilState* RenderStateCache::GetNativeDepthStencilState( const Dep
 	d3dDepthStencilDesc.DepthEnable			= key.depthEnable ? TRUE : FALSE;
 	d3dDepthStencilDesc.DepthWriteMask		= key.depthWrite ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
 	d3dDepthStencilDesc.DepthFunc			= ToNativeComparisonFunc( static_cast< ComparisonFunc >( key.depthFunc ) );
-	d3dDepthStencilDesc.StencilEnable		= key.depthEnable ? TRUE : FALSE;
+	d3dDepthStencilDesc.StencilEnable		= key.stencilEnable ? TRUE : FALSE;
 	d3dDepthStencilDesc.StencilReadMask		= static_cast< u8 >( key.stencilReadMask );
 	d3dDepthStencilDesc.StencilWriteMask	= static_cast< u8 >( key.stencilWriteMask );
 
