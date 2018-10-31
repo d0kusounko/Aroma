@@ -6,12 +6,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\VsSimple.hlsl">
-      <Filter>shader</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="shader\PsSimple.hlsl">
+      <Filter>shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\VsSimple.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
   </ItemGroup>
