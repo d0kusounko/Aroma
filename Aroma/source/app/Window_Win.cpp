@@ -79,12 +79,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wp, LPARAM lp )
 				case SIZE_MAXIMIZED:
 					param.action	= WindowSizeAction::kMaximized;
 					break;
-				case SIZE_MAXSHOW:
-					param.action	= WindowSizeAction::kMaxShow;
-					break;
-				case SIZE_MAXHIDE:
-					param.action	= WindowSizeAction::kMaxHide;
-					break;
+
+				// MEMO: SIZE_MAXSHOW, SIZE_MAXHIDE の来る条件がよくわからないので,
+				//		 もし来た場合は通常処理としてますが, 必要になった場合は,
+				//		 WindowSizeAction にアクションを追加してちゃんと対応して下さい.
 				default:
 					param.action	= WindowSizeAction::kNormal;
 					break;

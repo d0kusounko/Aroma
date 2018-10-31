@@ -50,8 +50,6 @@ enum class WindowSizeAction
 	kNormal,	//!< 通常サイズ変更された.
 	kMinimized,	//!< 最小化された.
 	kMaximized,	//!< 最大化された.
-	kMaxShow,	//!< 他のウィンドウが元にサイズに戻った.
-	kMaxHide,	//!< 他のウィンドウが最大化された.
 	kNum,
 };
 
