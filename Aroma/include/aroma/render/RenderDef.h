@@ -130,6 +130,13 @@ struct Viewport
 	f32 h;
 	f32 minDepth;
 	f32 maxDepth;
+
+	Viewport() :
+		x(0.0f), y(0.0f), w(0.0f), h(0.0f), minDepth(0.0f), maxDepth(1.0f)
+	{}
+	Viewport(f32 x, f32 y, f32 w, f32 h, f32 minZ = 0.0f, f32 maxZ = 1.0f) :
+		x(x), y(y), w(w), h(h), minDepth(minZ), maxDepth(maxZ)
+	{}
 };
 
 //---------------------------------------------------------------------------
@@ -323,7 +330,7 @@ u32 ToAromaBindFlags( u32 nativeFlags );
 //---------------------------------------------------------------------------
 //! @brief		UsageよりCPUアクセスフラグ取得.
 //---------------------------------------------------------------------------
-u32 GetCpuAccessFlag( Usage aromaUsage );
+u32 GetCpuAccessFlags( Usage aromaUsage );
 
 //---------------------------------------------------------------------------
 //! @brief		ネイティブAPI CPUアクセスフラグ取得.

@@ -317,7 +317,7 @@ u32 ToAromaBindFlags( u32 nativeFlags )
 //---------------------------------------------------------------------------
 //! @brief		UsageよりCPUアクセスフラグ取得.
 //---------------------------------------------------------------------------
-u32 GetCpuAccessFlag( Usage aromaUsage )
+u32 GetCpuAccessFlags( Usage aromaUsage )
 {
 	constexpr u32 cpuAccessFlags[] =
 	{
