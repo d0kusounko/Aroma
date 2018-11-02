@@ -546,7 +546,7 @@ void Draw()
 		viewport.h			= static_cast< f32 >( kSampleScreenSize.height );
 		viewport.minDepth	= 0.0f;
 		viewport.maxDepth	= 1.0f;
-		g_context->RSSetViewports( 1, &viewport );
+		g_context->RSSetViewportScissorState( 0, render::ViewportScissorState::Setting::kViewport, viewport );
 
 		// シザー.
 		render::ScissorRect scissor;
@@ -554,7 +554,7 @@ void Draw()
 		scissor.y = 0;
 		scissor.w = kSampleScreenSize.width;
 		scissor.h = kSampleScreenSize.height;
-		g_context->RSSetScissors( 1, &scissor );
+		g_context->RSSetViewportScissorState( 0, render::ViewportScissorState::Setting::kScissor, scissor );
 			
 		// レンダーターゲット設定.
 		g_context->OMSetRenderTargets( 1, &currentBackBuffer, nullptr );

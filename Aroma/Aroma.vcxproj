@@ -185,6 +185,7 @@
     <ClCompile Include="source\render\SwapChain_DX11.cpp" />
     <ClCompile Include="source\render\TextureView_DX11.cpp" />
     <ClCompile Include="source\render\Texture_DX11.cpp" />
+    <ClCompile Include="source\render\ViewportScissorState.cpp" />
     <ClCompile Include="source\util\Singleton.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +231,7 @@
     <ClInclude Include="include\aroma\render\SwapChain.h" />
     <ClInclude Include="include\aroma\render\Texture.h" />
     <ClInclude Include="include\aroma\render\TextureView.h" />
+    <ClInclude Include="include\aroma\render\ViewportScissorState.h" />
     <ClInclude Include="include\aroma\util\NonCopyable.h" />
     <ClInclude Include="include\aroma\util\Singleton.h" />
   </ItemGroup>

@@ -435,6 +435,11 @@ void DeferredContext::PSSetConstantBuffer( u32 slot, Buffer* cb )
 }
 
 //===========================================================================
+//	RS: ラスタライザーステージ.
+//===========================================================================
+// None
+
+//===========================================================================
 //	OM: 出力マージャーステージ.
 //===========================================================================
 //---------------------------------------------------------------------------
@@ -492,57 +497,6 @@ TextureView* DeferredContext::OMGetDepthStencilTarget() const
 {
 	return _depthStencil;
 }
-
-//===========================================================================
-//!	@name		RS: ラスタライザーステージ.
-//===========================================================================
-//! @{
-//---------------------------------------------------------------------------
-//	ビューポート設定.
-//---------------------------------------------------------------------------
-void DeferredContext::RSSetViewports( u32 viewportNum, const Viewport* viewports )
-{
-	BEGIN_ERROR_CHECK();
-
-	if( viewportNum == 0 ) return;
-
-	D3D11_VIEWPORT* d3dViewports = new D3D11_VIEWPORT[ viewportNum ];
-	for( u32 i = 0; i < viewportNum; ++i )
-	{
-		d3dViewports[ i ].TopLeftX 	= viewports[ i ].x;
-		d3dViewports[ i ].TopLeftY 	= viewports[ i ].y;
-		d3dViewports[ i ].Width 	= viewports[ i ].w;
-		d3dViewports[ i ].Height 	= viewports[ i ].h;
-		d3dViewports[ i ].MinDepth 	= viewports[ i ].minDepth;
-		d3dViewports[ i ].MaxDepth 	= viewports[ i ].maxDepth;
-	}
-	_d3dContext->RSSetViewports( viewportNum, d3dViewports );
-	memory::SafeDeleteArray( d3dViewports );
-}
-
-//---------------------------------------------------------------------------
-//	シザー設定.
-//---------------------------------------------------------------------------
-void DeferredContext::RSSetScissors( u32 scissorsNum, const ScissorRect* scisscorRects )
-{
-	BEGIN_ERROR_CHECK();
-
-	if( scissorsNum == 0 ) return;
-
-	D3D11_RECT* rects = new D3D11_RECT[ scissorsNum ];
-	for( u32 i = 0; i < scissorsNum; ++i )
-	{
-		rects[ i ].left		= scisscorRects[ i ].x;
-		rects[ i ].top		= scisscorRects[ i ].y;
-		rects[ i ].right	= scisscorRects[ i ].x + scisscorRects[ i ].w;
-		rects[ i ].bottom	= scisscorRects[ i ].y + scisscorRects[ i ].h;
-	}
-	_d3dContext->RSSetScissorRects( scissorsNum, rects );
-	memory::SafeDeleteArray( rects );
-}
-//! @}
-
-//! @}
 
 //---------------------------------------------------------------------------
 //	ネイティブAPI遅延コンテキストの取得.
@@ -758,6 +712,18 @@ void DeferredContext::SyncDrawPipeline()
 		RasterizerStateKey key( _rasterizerState );
 		auto	d3dRasterizerState = renderStateCache->GetNativeRasterizerState( key );
 		_d3dContext->RSSetState( d3dRasterizerState );
+	}
+
+	// ビューポートシザーステート.
+	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagRSViewportScissorState ] )
+	{
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagRSViewportScissorState ] = false;
+
+		ViewportScissorStateKey key( _viewportScissorState );
+		auto	d3dViewportScissorState = renderStateCache->GetNativeViewportScissorState( key );
+
+		_d3dContext->RSSetViewports( kViewportsSlotMax, d3dViewportScissorState->viewport );
+		_d3dContext->RSSetScissorRects( kViewportsSlotMax, d3dViewportScissorState->scissor );
 	}
 
 	//-----------------------------------------------------------------------

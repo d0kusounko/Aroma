@@ -16,6 +16,7 @@
 #include "RasterizerState.h"
 #include "DepthStencilState.h"
 #include "SamplerState.h"
+#include "ViewportScissorState.h"
 #include "../common/RefObject.h"
 #include "../util/NonCopyable.h"
 #include "../data/DataDef.h"
@@ -189,14 +190,10 @@ public:
 	//=======================================================================
 	//! @{
 	//-----------------------------------------------------------------------
-	//!	@brief		ビューポート設定.
+	//!	@brief		ビューポートシザーステート設定.
 	//-----------------------------------------------------------------------
-	void RSSetViewports( u32 viewportNum, const Viewport* viewports );
-
-	//-----------------------------------------------------------------------
-	//!	@brief		シザー設定.
-	//-----------------------------------------------------------------------
-	void RSSetScissors( u32 scissorsNum, const ScissorRect* scisscorRects );
+	template< class T >
+	inline void RSSetViewportScissorState( u32 slot, ViewportScissorState::Setting state, T value );
 
 	//-----------------------------------------------------------------------
 	//!	@brief		ラスタライザーステート設定.
@@ -213,7 +210,7 @@ public:
 	//!	@brief		出力先レンダーターゲット設定.
 	//-----------------------------------------------------------------------
 	void OMSetRenderTargets( u32 rtvNum, TextureView* const* rtvs, TextureView* dsv );
-	
+
 	//-----------------------------------------------------------------------
 	//!	@brief		設定済み出力先レンダーターゲット取得.
 	//-----------------------------------------------------------------------
@@ -324,7 +321,7 @@ private:
 
 	// RSステージ.
 	RasterizerState			_rasterizerState;
-	// ViewportScissorState	_viewportScissorState;
+	ViewportScissorState	_viewportScissorState;
 
 	// OMステージ.
 	TextureView*			_renderTargets[ kRenderTargetsSlotMax ];
@@ -342,24 +339,6 @@ private:
 //---------------------------------------------------------------------------
 // Inline Functions
 //---------------------------------------------------------------------------
-template< class T >
-void DeferredContext::RSSetRasterizerState( RasterizerState::Setting state, T value )
-{
-	if( _rasterizerState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagRSRasterizerState ] = true;
-}
-
-template< class T >
-void DeferredContext::OMSetBlendState( BlendState::Setting state, T value )
-{
-	if( _blendState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagOMBlendState ] = true;
-}
-
-template< class T >
-void DeferredContext::OMSetDepthStencilState( DepthStencilState::Setting state, T value )
-{
-	if( _depthStencilState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagOMDepthStencilState ] = true;
-}
-
 template< class T >
 void DeferredContext::VSSetSamplerState( u32 slot, SamplerState::Setting state, T value )
 {
@@ -381,6 +360,31 @@ void DeferredContext::PSSetSamplerState( u32 slot, SamplerState::Setting state, 
 	}
 	if( _psSamplerStates[ slot ].Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagPSSamplerState + slot ] = true;
 }
+
+template< class T >
+void DeferredContext::RSSetRasterizerState( RasterizerState::Setting state, T value )
+{
+	if( _rasterizerState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagRSRasterizerState ] = true;
+}
+
+template< class T >
+void DeferredContext::RSSetViewportScissorState( u32 slot, ViewportScissorState::Setting state,T value )
+{
+	if( _viewportScissorState.Set( slot, state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagRSViewportScissorState ] = true;
+}
+
+template< class T >
+void DeferredContext::OMSetBlendState( BlendState::Setting state, T value )
+{
+	if( _blendState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagOMBlendState ] = true;
+}
+
+template< class T >
+void DeferredContext::OMSetDepthStencilState( DepthStencilState::Setting state, T value )
+{
+	if( _depthStencilState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagOMDepthStencilState ] = true;
+}
+
 
 } // namespace render
 } // namespace aroma

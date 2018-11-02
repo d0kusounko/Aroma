@@ -16,6 +16,7 @@
 #include "RasterizerState.h"
 #include "DepthStencilState.h"
 #include "SamplerState.h"
+#include "ViewportScissorState.h"
 #include "../util/NonCopyable.h"
 #include "../data/CRC.h"
 
@@ -23,10 +24,18 @@ namespace aroma {
 namespace render {
 
 #ifdef AROMA_RENDER_DX11
-using NativeBlendState			= ID3D11BlendState;
-using NativeRasterizerState		= ID3D11RasterizerState;
-using NativeDepthStencilState	= ID3D11DepthStencilState;
-using NativeSamplerState		= ID3D11SamplerState;
+
+struct D3D11_VIEWPORT_SCISSOR
+{
+	D3D11_VIEWPORT	viewport[ kViewportsSlotMax ];
+	D3D11_RECT		scissor[ kViewportsSlotMax ];
+};
+
+using NativeBlendState				= ID3D11BlendState;
+using NativeRasterizerState			= ID3D11RasterizerState;
+using NativeDepthStencilState		= ID3D11DepthStencilState;
+using NativeSamplerState			= ID3D11SamplerState;
+using NativeViewportScissorState	= D3D11_VIEWPORT_SCISSOR;
 #endif
 
 class Device;
@@ -133,6 +142,20 @@ struct SamplerStateKey final
 bool operator==( const SamplerStateKey& lhs, const SamplerStateKey& rhs );
 bool operator!=( const SamplerStateKey& lhs, const SamplerStateKey& rhs );
 
+//---------------------------------------------------------------------------
+//!	@brief		ビューポートシザーステートハッシュキー.
+//---------------------------------------------------------------------------
+struct ViewportScissorStateKey final
+{
+	Viewport	viewport[ kViewportsSlotMax ];
+	ScissorRect	scissor[ kViewportsSlotMax ];
+
+	ViewportScissorStateKey( const ViewportScissorState& state );
+	void Set( const ViewportScissorState& state );
+};
+bool operator==( const ViewportScissorStateKey& lhs, const ViewportScissorStateKey& rhs );
+bool operator!=( const ViewportScissorStateKey& lhs, const ViewportScissorStateKey& rhs );
+
 } // namespace render
 } // namespace aroma
 
@@ -189,6 +212,18 @@ struct hash< aroma::render::SamplerStateKey >
 	}
 };
 
+//---------------------------------------------------------------------------
+//!	@brief		ビューポートシザーステートハッシュ.
+//---------------------------------------------------------------------------
+template <>
+struct hash< aroma::render::ViewportScissorStateKey >
+{
+	size_t operator()( const aroma::render::ViewportScissorStateKey& key ) const noexcept
+	{
+		return aroma::data::CRC::GetCRC( &key, sizeof( key ) );
+	}
+};
+
 }	// namespace std
 //! @}
 
@@ -230,6 +265,11 @@ public:
 	//-----------------------------------------------------------------------
 	NativeSamplerState* GetNativeSamplerState( const SamplerStateKey& key );
 
+	//-----------------------------------------------------------------------
+	//!	@brief		ネイティブAPIビューポートシザーステート取得.
+	//-----------------------------------------------------------------------
+	NativeViewportScissorState* GetNativeViewportScissorState( const ViewportScissorStateKey& key );
+
 private:
 	RenderStateCache();
 
@@ -247,6 +287,9 @@ private:
 
 	using SamplerStateCache = std::unordered_map< SamplerStateKey, NativeSamplerState* >;
 	SamplerStateCache _samplerStateCache;
+
+	using ViewportScissorStateCache = std::unordered_map< ViewportScissorStateKey, NativeViewportScissorState* >;
+	ViewportScissorStateCache _viewportScissorStateCache;
 };
 
 } // namespace render

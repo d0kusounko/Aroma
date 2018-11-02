@@ -111,7 +111,7 @@ bool operator!=( const RasterizerStateKey& lhs, const RasterizerStateKey& rhs )
 //===========================================================================
 //! @{
 //===========================================================================
-//!	@name		コピーコンストラクタ.
+//!	@brief		コピーコンストラクタ.
 //===========================================================================
 DepthStencilStateKey::DepthStencilStateKey( const DepthStencilState& state )
 {
@@ -119,7 +119,7 @@ DepthStencilStateKey::DepthStencilStateKey( const DepthStencilState& state )
 }
 
 //===========================================================================
-//!	@name		キー生成.
+//!	@brief		キー生成.
 //===========================================================================
 void DepthStencilStateKey::Set( const DepthStencilState& state )
 {
@@ -157,7 +157,7 @@ bool operator!=( const DepthStencilStateKey& lhs, const DepthStencilStateKey& rh
 //===========================================================================
 //! @{
 //===========================================================================
-//!	@name		コピーコンストラクタ.
+//!	@brief		コピーコンストラクタ.
 //===========================================================================
 SamplerStateKey::SamplerStateKey( const SamplerState& state )
 {
@@ -165,7 +165,7 @@ SamplerStateKey::SamplerStateKey( const SamplerState& state )
 }
 
 //===========================================================================
-//!	@name		キー生成.
+//!	@brief		キー生成.
 //===========================================================================
 void SamplerStateKey::Set( const SamplerState& state )
 {
@@ -193,6 +193,41 @@ bool operator!=( const SamplerStateKey& lhs, const SamplerStateKey& rhs )
 }
 //! @}
 
+//===========================================================================
+//!	@name		ビューポートシザーステートステートハッシュキー.
+//===========================================================================
+//! @{
+//===========================================================================
+//!	@brief		コピーコンストラクタ.
+//===========================================================================
+ViewportScissorStateKey::ViewportScissorStateKey( const ViewportScissorState& state )
+{
+	Set( state );
+}
+
+//===========================================================================
+//!	@brief		キー生成.
+//===========================================================================
+void ViewportScissorStateKey::Set( const ViewportScissorState& state )
+{
+	memset( this, 0, sizeof( ViewportScissorStateKey ) );
+
+	for( u32 i = 0; i < kViewportsSlotMax; ++i )
+	{
+		viewport[ i ]	= state.viewport[ i ];
+		scissor[ i ]	= state.scissor[ i ];
+	}
+}
+
+bool operator==( const ViewportScissorStateKey& lhs, const ViewportScissorStateKey& rhs )
+{
+	return memcmp( &lhs, &rhs, sizeof( ViewportScissorStateKey ) ) == 0;
+}
+bool operator!=( const ViewportScissorStateKey& lhs, const ViewportScissorStateKey& rhs )
+{
+	return !( lhs == rhs );
+}
+//! @}
 
 //===========================================================================
 //!	@name		レンダーステートキャッシュ.
@@ -207,6 +242,8 @@ RenderStateCache::RenderStateCache( Device* device )
 	_blendStateCache.reserve( kStatesMax );
 	_rasterizerStateCache.reserve( kStatesMax );
 	_depthStencilStateCache.reserve( kStatesMax );
+	_samplerStateCache.reserve( kStatesMax );
+	_viewportScissorStateCache.reserve( kStatesMax );
 }
 
 //---------------------------------------------------------------------------
@@ -214,21 +251,25 @@ RenderStateCache::RenderStateCache( Device* device )
 //---------------------------------------------------------------------------
 RenderStateCache::~RenderStateCache()
 {
-	for( auto& nativeBlendState : _blendStateCache )
+	for( auto& it : _blendStateCache )
 	{
-		memory::SafeRelease( nativeBlendState.second );
+		memory::SafeRelease( it.second );
 	}
-	for( auto& nativeRasterizerState : _rasterizerStateCache )
+	for( auto& it : _rasterizerStateCache )
 	{
-		memory::SafeRelease( nativeRasterizerState.second );
+		memory::SafeRelease( it.second );
 	}
-	for( auto& nativeDepthStencilState : _depthStencilStateCache )
+	for( auto& it : _depthStencilStateCache )
 	{
-		memory::SafeRelease( nativeDepthStencilState.second );
+		memory::SafeRelease( it.second );
 	}
-	for( auto& nativeSamplerState : _samplerStateCache )
+	for( auto& it : _samplerStateCache )
 	{
-		memory::SafeRelease( nativeSamplerState.second );
+		memory::SafeRelease( it.second );
+	}
+	for( auto& it : _viewportScissorStateCache )
+	{
+		memory::SafeDelete( it.second );	// RefObjectでは無いのでDelete.
 	}
 }
 
@@ -375,6 +416,43 @@ NativeSamplerState* RenderStateCache::GetNativeSamplerState( const SamplerStateK
 	return d3dSamplerState;
 }
 
+//---------------------------------------------------------------------------
+//	ネイティブAPIビューポートシザーステート取得.
+//---------------------------------------------------------------------------
+NativeViewportScissorState* RenderStateCache::GetNativeViewportScissorState( const ViewportScissorStateKey& key )
+{
+	auto it = _viewportScissorStateCache.find( key );
+	if( it != _viewportScissorStateCache.end() )
+	{
+		// キャッシュを返却.
+		return it->second;
+	}
+
+	// キャッシュされていない場合は新規追加.
+	D3D11_VIEWPORT_SCISSOR* d3dViewportScissor = new D3D11_VIEWPORT_SCISSOR;
+	for( u32 i = 0; i < kViewportsSlotMax; ++i )
+	{
+		auto& viewport	= d3dViewportScissor->viewport[ i ];
+		auto& scissor	= d3dViewportScissor->scissor[ i ];
+
+		memory::Clear( viewport );
+		viewport.TopLeftX 	= key.viewport[ i ].x;
+		viewport.TopLeftY 	= key.viewport[ i ].y;
+		viewport.Width		= key.viewport[ i ].w;
+		viewport.Height 	= key.viewport[ i ].h;
+		viewport.MinDepth 	= key.viewport[ i ].minDepth;
+		viewport.MaxDepth 	= key.viewport[ i ].maxDepth;
+
+		memory::Clear( scissor );
+		scissor.left		= key.scissor[ i ].x;
+		scissor.top			= key.scissor[ i ].y;
+		scissor.right		= key.scissor[ i ].x + key.scissor[ i ].w;
+		scissor.bottom		= key.scissor[ i ].y + key.scissor[ i ].h;
+	}
+
+	_viewportScissorStateCache[ key ] = d3dViewportScissor;
+	return d3dViewportScissor;
+}
 //! @}
 
 } // namespace render

@@ -162,12 +162,30 @@ struct Viewport
 	f32 minDepth;
 	f32 maxDepth;
 
-	Viewport() :
-		x(0.0f), y(0.0f), w(0.0f), h(0.0f), minDepth(0.0f), maxDepth(1.0f)
-	{}
+	Viewport()
+	{ Default(); }
 	Viewport(f32 x, f32 y, f32 w, f32 h, f32 minZ = 0.0f, f32 maxZ = 1.0f) :
 		x(x), y(y), w(w), h(h), minDepth(minZ), maxDepth(maxZ)
 	{}
+
+	void Default()
+	{
+		x			= 0.0f;
+		y			= 0.0f;
+		w			= 0.0f;
+		h			= 0.0f;
+		minDepth	= 0.0f;
+		maxDepth	= 1.0f;
+	}
+
+	bool operator==( const Viewport& rhs )
+	{
+		return memcmp( this, &rhs, sizeof( Viewport ) ) == 0;
+	}
+	bool operator!=( const Viewport& rhs )
+	{
+		return !(*this == rhs);
+	}
 };
 
 //---------------------------------------------------------------------------
@@ -175,6 +193,24 @@ struct Viewport
 //---------------------------------------------------------------------------
 struct ScissorRect : public data::Rect
 {
+	ScissorRect()
+	{ Default(); }
+	void Default()
+	{
+		x	= 0;
+		y	= 0;
+		w	= 0;
+		h	= 0;
+	}
+
+	bool operator==( const ScissorRect& rhs )
+	{
+		return memcmp( this, &rhs, sizeof( ScissorRect ) ) == 0;;
+	}
+	bool operator!=( const ScissorRect& rhs )
+	{
+		return !(*this == rhs);
+	}
 };
 
 //---------------------------------------------------------------------------
