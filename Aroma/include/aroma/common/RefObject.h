@@ -10,6 +10,7 @@
 #pragma once
 
 #include <atomic>
+#include <list>
 #include "Typedef.h"
 
 namespace aroma
@@ -21,16 +22,8 @@ namespace aroma
 class RefObject
 {
 public:
-	//-----------------------------------------------------------------------
-	//! @brief		コンストラクタ.
-	//-----------------------------------------------------------------------
-	RefObject()
-		: _refCount(1)
-	{}
-	//-----------------------------------------------------------------------
-	//! @brief		デストラクタ.
-	//-----------------------------------------------------------------------
-	virtual ~RefObject() {}
+	RefObject();
+	virtual ~RefObject();
 
 	//-----------------------------------------------------------------------
 	//!	@brief		解放（参照カウンターを1減少).
@@ -57,5 +50,22 @@ public:
 private:
 	volatile std::atomic< s32 >	_refCount;	//!< 参照カウント.
 };
+
+#ifdef AROMA_DEBUG
+class RefObjectManager final
+{
+	friend RefObject;
+public:
+	//-----------------------------------------------------------------------
+	//!	@brief		全RefObjectインスタンスの参照カウントをデバッグ出力.
+	//-----------------------------------------------------------------------
+	static void Dump();
+
+private:
+	static void AddObj( RefObject* obj );
+	static void DelObj( RefObject* obj );
+	static std::list< RefObject* > _objs;
+};
+#endif
 
 } // namespace aroma
