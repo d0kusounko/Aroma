@@ -649,10 +649,7 @@ void DrawSprite( render::DeferredContext* context, Sprite* sprite )
 			memcpy( mapped, vtx, sizeof( vtx ) );
 		}
 		sprite->vtxBuffer[ g_bufferingIndex ]->Unmap();
-
-		u32 stride = sizeof( Vertex );
-		u32 offset = 0;
-		context->IASetVertexBuffers( 0, 1, &sprite->vtxBuffer[ g_bufferingIndex ], &stride, &offset );
+		context->IASetVertexBuffer( 0, sprite->vtxBuffer[ g_bufferingIndex ], sizeof( Vertex ), 0 );
 
 		// テクスチャ設定.
 		{
@@ -677,7 +674,7 @@ void CreateSprite( Sprite** outSprite, CTStr ddsPath )
 		file::File* ddsFile	= new file::File;
 		void*	ddsBuf		= nullptr;
 		size_t	ddsBufSize	= 0;
-		
+
 		bool result = ddsFile->Open( ddsPath, file::kOpenModeFlagRead, file::kShareFlagRead );
 		AROMA_ASSERT( result, _T( "Failed to file open.\n" ) );
 		result = ddsFile->GetFileSize( &ddsBufSize );

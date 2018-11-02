@@ -1,7 +1,7 @@
 ﻿//===========================================================================
 //!
 //!	@file		DeferredContext_DX11.cpp
-//!	@brief		遅延コンテキスト : DirectX11.
+//! @brief		遅延コンテキスト : DirectX11.
 //!
 //!	@author		Copyright (C) DebugCurry. All rights reserved.
 //!	@author		d0
@@ -29,18 +29,33 @@ namespace render {
 	}																	\
 
 //---------------------------------------------------------------------------
-//!	@brief		コンストラクタ.
+//	コンストラクタ.
 //---------------------------------------------------------------------------
 DeferredContext::DeferredContext()
 	: _initialized( false )
 	, _device( nullptr )
 	, _d3dContext( nullptr )
 	, _begin( false )
+	, _indexBuffer( nullptr )
+	, _indexBufferOffset( 0 )
+	, _primitiveType( PrimitiveType::kUndefined )
+	, _inputLayout( nullptr )
+	, _vsShader( nullptr )
+	, _psShader( nullptr )
+	, _depthStencil( nullptr )
 {
+	memory::Clear( _vertexBuffers );
+	memory::Clear( _vertexBufferStrides );
+	memory::Clear( _vertexBufferOffsets );
+	memory::Clear( _vsShaderResources );
+	memory::Clear( _vsConstantBuffers );
+	memory::Clear( _psShaderResources );
+	memory::Clear( _psConstantBuffers );
+	memory::Clear( _renderTargets );
 }
 
 //---------------------------------------------------------------------------
-//!	@brief		デストラクタ.
+//	デストラクタ.
 //---------------------------------------------------------------------------
 DeferredContext::~DeferredContext()
 {
@@ -48,7 +63,7 @@ DeferredContext::~DeferredContext()
 }
 
 //---------------------------------------------------------------------------
-//!	@brief		初期化.
+//	初期化.
 //---------------------------------------------------------------------------
 void DeferredContext::Initialize( Device* device, const Desc& desc )
 {
@@ -73,19 +88,50 @@ void DeferredContext::Initialize( Device* device, const Desc& desc )
 }
 
 //---------------------------------------------------------------------------
-//!	@brief		解放.
+//	解放.
 //---------------------------------------------------------------------------
 void DeferredContext::Finalize()
 {
 	if( !_initialized ) return;
 
-	_blendState.Default();
-	_rasterizerState.Default();
-	_depthStencilState.Default();
-	for( auto& state : _psSamplerStates )
+	// IAステージ.
+	for( auto& vtxBuf : _vertexBuffers )
 	{
-		state.Default();
+		memory::SafeRelease( vtxBuf );
 	}
+	memory::SafeRelease( _indexBuffer );
+	memory::SafeRelease( _inputLayout );
+
+	// VSステージ.
+	memory::SafeRelease( _vsShader );
+	for( auto& srv : _vsShaderResources )
+	{
+		memory::SafeRelease( srv );
+	}
+	for( auto& cb : _vsConstantBuffers )
+	{
+		memory::SafeRelease( cb );
+	}
+
+	// PSステージ.
+	memory::SafeRelease( _psShader );
+	for( auto& srv : _psShaderResources )
+	{
+		memory::SafeRelease( srv );
+	}
+	for( auto& cb : _psConstantBuffers )
+	{
+		memory::SafeRelease( cb );
+	}
+
+	// OMステージ.
+	for( auto& rtv : _renderTargets )
+	{
+		memory::SafeRelease( rtv );
+	}
+	memory::SafeRelease( _depthStencil );
+
+	// デバイス.
 	memory::SafeRelease( _d3dContext );
 	memory::SafeRelease( _device );
 	_desc.Default();
@@ -94,7 +140,7 @@ void DeferredContext::Finalize()
 }
 
 //---------------------------------------------------------------------------
-//!	@brief		コマンド記録開始.
+//	コマンド記録開始.
 //---------------------------------------------------------------------------
 void DeferredContext::Begin()
 {
@@ -114,7 +160,7 @@ void DeferredContext::Begin()
 }
 
 //---------------------------------------------------------------------------
-//!	@brief		コマンド記録終了.
+//	コマンド記録終了.
 //---------------------------------------------------------------------------
 void DeferredContext::End( CommandList** outCommandList )
 {
@@ -143,7 +189,7 @@ void DeferredContext::End( CommandList** outCommandList )
 //! @{
 
 //---------------------------------------------------------------------------
-//!	@brief		レンダーターゲットを指定カラーでクリア.
+//	レンダーターゲットを指定カラーでクリア.
 //---------------------------------------------------------------------------
 void DeferredContext::ClearRenderTarget( TextureView* rtv, const data::Color& color )
 {
@@ -177,124 +223,282 @@ void DeferredContext::DrawIndexed( u32 indexNum, u32 startIndex, u32 baseVertexI
 }
 
 //===========================================================================
-//!	@name		VS: 頂点シェーダーステージ.
+//	IA: 入力アセンブラーステージ.
 //===========================================================================
-//! @{
 //---------------------------------------------------------------------------
-//!	@brief		頂点シェーダー設定.
+//	入力レイアウト設定.
 //---------------------------------------------------------------------------
-void DeferredContext::VSSetShader( const Shader* vs )
+void DeferredContext::IASetInputLayout( InputLayout* inputLayout )
 {
-	BEGIN_ERROR_CHECK();
-	_d3dContext->VSSetShader( vs->GetNativeVertexShader(), nullptr, 0 );
-}
-//! @}
-
-//===========================================================================
-//!	@name		PS: ピクセルシェーダーステージ.
-//===========================================================================
-//! @{
-//---------------------------------------------------------------------------
-//!	@brief		ピクセルシェーダー設定.
-//---------------------------------------------------------------------------
-void DeferredContext::PSSetShader( const Shader* ps )
-{
-	BEGIN_ERROR_CHECK();
-	_d3dContext->PSSetShader( ps->GetNativePixelShader(), nullptr, 0 );
-}
-
-//---------------------------------------------------------------------------
-//!	@brief		シェーダーリソース設定.
-//---------------------------------------------------------------------------
-void DeferredContext::PSSetShaderResource( u32 slot, const TextureView* srv )
-{
-	BEGIN_ERROR_CHECK();
-	ID3D11ShaderResourceView* const srvs[] = { srv->GetNativeShaderResourceView() };
-	_d3dContext->PSSetShaderResources( slot, 1, srvs );
-}
-
-//---------------------------------------------------------------------------
-//!	@brief		シェーダーリソース設定.
-//---------------------------------------------------------------------------
-void DeferredContext::PSSetConstantBuffer( u32 slot, const Buffer* cb )
-{
-	BEGIN_ERROR_CHECK();
-	ID3D11Buffer* const cbs[] = { cb->GetNativeBuffer() };
-	_d3dContext->PSSetConstantBuffers( slot, 1, cbs );
-}
-//! @}
-
-//===========================================================================
-//!	@name		IA: 入力アセンブラーステージ.
-//===========================================================================
-//! @{
-//---------------------------------------------------------------------------
-//!	@brief		入力レイアウト設定.
-//---------------------------------------------------------------------------
-void DeferredContext::IASetInputLayout( const InputLayout* inputLayout )
-{
-	BEGIN_ERROR_CHECK();
-	_d3dContext->IASetInputLayout( inputLayout->GetNativeInputLayout() );
-}
-
-//---------------------------------------------------------------------------
-//!	@brief		プリミティブタイプ設定.
-//---------------------------------------------------------------------------
-void DeferredContext::IASetPrimitiveType( const PrimitiveType primitiveType )
-{
-	BEGIN_ERROR_CHECK();
-	_d3dContext->IASetPrimitiveTopology( ToNativePrimitiveType( primitiveType ) );
-}
-
-//-----------------------------------------------------------------------
-//!	@brief		インデックスバッファ設定.
-//-----------------------------------------------------------------------
-void DeferredContext::IASetIndexBuffer( const Buffer* indexBuffer, u32 offset )
-{
-	BEGIN_ERROR_CHECK();
-
-	DXGI_FORMAT d3dFortmat = DXGI_FORMAT_UNKNOWN;
-	switch( GetIndexTypeFromBufferStride( indexBuffer->GetDesc().stride ) )
+	if( _inputLayout != inputLayout )
 	{
-		case IndexType::k16:
-			d3dFortmat = DXGI_FORMAT_R16_UINT;
-			break;
-		case IndexType::k32:
-			d3dFortmat = DXGI_FORMAT_R32_UINT;
-			break;
-		default:
-			AROMA_ASSERT( false, _T( "Undefined index type.\n" ) );
-			break;
+		memory::SafeRelease( _inputLayout );
+		_inputLayout = inputLayout;
+		_inputLayout->AddRef();
+
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagIAInputLayout ] = true;
+	}
+}
+
+//---------------------------------------------------------------------------
+//	プリミティブタイプ設定.
+//---------------------------------------------------------------------------
+void DeferredContext::IASetPrimitiveType( PrimitiveType primitiveType )
+{
+	if( _primitiveType != primitiveType )
+	{
+		_primitiveType = primitiveType;
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagIAPrimitiveType ] = true;
+	}
+}
+
+//---------------------------------------------------------------------------
+//	頂点バッファ設定.
+//---------------------------------------------------------------------------
+void DeferredContext::IASetVertexBuffer( u32 slot, Buffer* vb, u32 stride, u32 offset )
+{
+	if( slot >= kInputStreamsMax )
+	{
+		AROMA_ASSERT( false, _T( "Slot is out of range.\n" ) );
+		return;
 	}
 
-	_d3dContext->IASetIndexBuffer( indexBuffer->GetNativeBuffer(), d3dFortmat, offset );
-}
-
-//-----------------------------------------------------------------------
-//!	@brief		頂点バッファ設定.
-//-----------------------------------------------------------------------
-void DeferredContext::IASetVertexBuffers( u32 startStreamIdx, u32 bufferNum, Buffer* const* buffers, const u32* strides, const u32* offsets )
-{
-	BEGIN_ERROR_CHECK();
-	if( bufferNum == 0 ) return;
-
-	ID3D11Buffer**	d3dBuffers = new ID3D11Buffer*[ bufferNum ];
-	for( u32 i = 0; i < bufferNum; ++i )
+	// 頂点バッファ.
+	if( _vertexBuffers[ slot ] != vb )
 	{
-		d3dBuffers[ i ] = buffers[ i ]->GetNativeBuffer();
+		memory::SafeRelease( _vertexBuffers[ slot ] );
+		_vertexBuffers[ slot ] = vb;
+		_vertexBuffers[ slot ]->AddRef();
+
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagIAVertexBuffer + slot ] = true;
 	}
-	_d3dContext->IASetVertexBuffers( startStreamIdx, bufferNum, d3dBuffers, strides, offsets );
-	memory::SafeDeleteArray( d3dBuffers );
+
+	// ストライド.
+	if( _vertexBufferStrides[ slot ] != stride )
+	{
+		_vertexBufferStrides[ slot ] = stride;
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagIAVertexBuffer + slot ] = true;
+	}
+
+	// オフセット.
+	if( _vertexBufferOffsets[ slot ] != offset )
+	{
+		_vertexBufferOffsets[ slot ] = offset;
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagIAVertexBuffer + slot ] = true;
+	}
 }
 
-//! @}
+//---------------------------------------------------------------------------
+//	インデックスバッファ設定.
+//---------------------------------------------------------------------------
+void DeferredContext::IASetIndexBuffer( Buffer* indexBuffer, u32 offset )
+{
+	if( _indexBuffer != indexBuffer )
+	{
+		memory::SafeRelease( _indexBuffer );
+		_indexBuffer = indexBuffer;
+		_indexBuffer->AddRef();
+
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagIAIndexBuffer ] = true;
+	}
+
+	if( _indexBufferOffset != offset )
+	{
+		_indexBufferOffset = offset;
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagIAIndexBuffer ] = true;
+	}
+}
+
+
+//===========================================================================
+//	VS: 頂点シェーダーステージ.
+//===========================================================================
+//---------------------------------------------------------------------------
+//	頂点シェーダー設定.
+//---------------------------------------------------------------------------
+void DeferredContext::VSSetShader( Shader* vs )
+{
+	if( _vsShader != vs )
+	{
+		memory::SafeRelease( _vsShader );
+		_vsShader = vs;
+		_vsShader->AddRef();
+
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagVSShader ] = true;
+	}
+}
+
+//---------------------------------------------------------------------------
+//	シェーダーリソース設定.
+//---------------------------------------------------------------------------
+void DeferredContext::VSSetShaderResource( u32 slot, TextureView* srv )
+{
+	if( slot >= kShaderResourceSlotMax )
+	{
+		AROMA_ASSERT( false, _T( "Slot is out of range.\n" ) );
+		return;
+	}
+
+	auto& contextSRV = _vsShaderResources[ slot ];
+	if( contextSRV != srv )
+	{
+		memory::SafeRelease( contextSRV );
+		contextSRV = srv;
+		contextSRV->AddRef();
+
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagVSShaderResource + slot ] = true;
+	}
+}
+
+//---------------------------------------------------------------------------
+//	定数バッファ設定.
+//---------------------------------------------------------------------------
+void DeferredContext::VSSetConstantBuffer( u32 slot, Buffer* cb )
+{
+	if( slot >= kShaderUniformBufferSlotMax )
+	{
+		AROMA_ASSERT( false, _T( "Slot is out of range.\n" ) );
+		return;
+	}
+
+	auto& constantBuffer = _vsConstantBuffers[ slot ];
+	if( constantBuffer != cb )
+	{
+		memory::SafeRelease( constantBuffer );
+		constantBuffer = cb;
+		constantBuffer->AddRef();
+
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagVSConstantBuffer + slot ] = true;
+	}
+}
+
+//=======================================================================
+//	PS: ピクセルシェーダーステージ.
+//=======================================================================
+//-----------------------------------------------------------------------
+//	ピクセルシェーダー設定.
+//-----------------------------------------------------------------------
+void DeferredContext::PSSetShader( Shader* ps )
+{
+	if( _psShader != ps )
+	{
+		memory::SafeRelease( _psShader );
+		_psShader = ps;
+		_psShader->AddRef();
+
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagPSShader ] = true;
+	}
+}
+
+//-----------------------------------------------------------------------
+//	シェーダーリソース設定.
+//-----------------------------------------------------------------------
+void DeferredContext::PSSetShaderResource( u32 slot, TextureView* srv )
+{
+	if( slot >= kShaderResourceSlotMax )
+	{
+		AROMA_ASSERT( false, _T( "Slot is out of range.\n" ) );
+		return;
+	}
+
+	auto& contextSRV = _psShaderResources[ slot ];
+	if( contextSRV != srv )
+	{
+		memory::SafeRelease( contextSRV );
+		contextSRV = srv;
+		contextSRV->AddRef();
+
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagPSShaderResource + slot ] = true;
+	}
+}
+
+//---------------------------------------------------------------------------
+//	定数バッファ設定.
+//---------------------------------------------------------------------------
+void DeferredContext::PSSetConstantBuffer( u32 slot, Buffer* cb )
+{
+	if( slot >= kShaderUniformBufferSlotMax )
+	{
+		AROMA_ASSERT( false, _T( "Slot is out of range.\n" ) );
+		return;
+	}
+
+	auto& constantBuffer = _psConstantBuffers[ slot ];
+	if( constantBuffer != cb )
+	{
+		memory::SafeRelease( constantBuffer );
+		constantBuffer = cb;
+		constantBuffer->AddRef();
+
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagPSConstantBuffer + slot ] = true;
+	}
+}
+
+//===========================================================================
+//	OM: 出力マージャーステージ.
+//===========================================================================
+//---------------------------------------------------------------------------
+//	出力先レンダーターゲット設定.
+//---------------------------------------------------------------------------
+void DeferredContext::OMSetRenderTargets( u32 rtvNum, TextureView* const* rtvs, TextureView* dsv )
+{
+	AROMA_ASSERT( rtvNum <= kRenderTargetsSlotMax, _T( "rtvNum is out of range.\n" ) );
+	AROMA_ASSERT( rtvNum >= 1, _T( "The number of render targets to be set must be 1 or more." ) );
+	AROMA_ASSERT( rtvs, _T( "Be sure to specify the render target list." ) );
+
+	for( u32 i = 0; i < rtvNum; ++i )
+	{
+		auto& rtv = _renderTargets[ i ];
+		if( rtv != rtvs[ i ] )
+		{
+			memory::SafeRelease( rtv );
+			rtv = rtvs[ i ];
+			if( rtv ) rtv->AddRef();
+
+			_pipelineDirtyBits[ kPipelineDirtyBitFlagOMRenderTarget ] = true;
+		}
+	}
+
+	if( _depthStencil != dsv )
+	{
+		memory::SafeRelease( _depthStencil );
+		_depthStencil = dsv;
+		if( _depthStencil ) _depthStencil->AddRef();
+
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagOMRenderTarget ] = true;
+	}
+}
+
+//---------------------------------------------------------------------------
+//	設定済み出力先レンダーターゲット取得.
+//---------------------------------------------------------------------------
+void DeferredContext::OMGetRenderTargets( u32 count, TextureView** outRTVs ) const
+{
+	if( count > kRenderTargetsSlotMax )
+	{
+		AROMA_ASSERT( false, _T( "count is out of range.\n" ) );
+		count = kRenderTargetsSlotMax;
+	}
+	for( u32 i = 0; i < count; ++i )
+	{
+		outRTVs[ i ] = _renderTargets[ i ];
+	}
+}
+
+//---------------------------------------------------------------------------
+//	設定済み深度ステンシルターゲット取得.
+//---------------------------------------------------------------------------
+TextureView* DeferredContext::OMGetDepthStencilTarget() const
+{
+	return _depthStencil;
+}
 
 //===========================================================================
 //!	@name		RS: ラスタライザーステージ.
 //===========================================================================
 //! @{
 //---------------------------------------------------------------------------
-//!	@brief		ビューポート設定.
+//	ビューポート設定.
 //---------------------------------------------------------------------------
 void DeferredContext::RSSetViewports( u32 viewportNum, const Viewport* viewports )
 {
@@ -317,7 +521,7 @@ void DeferredContext::RSSetViewports( u32 viewportNum, const Viewport* viewports
 }
 
 //---------------------------------------------------------------------------
-//!	@brief		シザー設定.
+//	シザー設定.
 //---------------------------------------------------------------------------
 void DeferredContext::RSSetScissors( u32 scissorsNum, const ScissorRect* scisscorRects )
 {
@@ -338,48 +542,10 @@ void DeferredContext::RSSetScissors( u32 scissorsNum, const ScissorRect* scissco
 }
 //! @}
 
-//===========================================================================
-//!	@name		OM: 出力マージャーステージ.
-//===========================================================================
-//! @{
-//---------------------------------------------------------------------------
-//!	@brief		出力先レンダーターゲット設定.
-//---------------------------------------------------------------------------
-void DeferredContext::OMSetRenderTargets( u32 rtvNum, TextureView* const* rtvs, TextureView* dsv )
-{
-	BEGIN_ERROR_CHECK();
-
-	AROMA_ASSERT( rtvNum >= 1, _T( "The number of render targets to be set must be 1 or more." ) );
-	AROMA_ASSERT( rtvs, _T( "Be sure to specify the render target list." ) );
-
-	// レンダーターゲットビュー.
-	ID3D11RenderTargetView** d3dRTVs = new ID3D11RenderTargetView*[ rtvNum ];
-	bool existRTV = false;
-	for( u32 i = 0; i < rtvNum; ++i )
-	{
-		auto d3dRTV = rtvs[ i ]->GetNativeRenderTargetView();
-		if( d3dRTV )
-		{
-			d3dRTVs[ i ] = d3dRTV;
-			existRTV = true;
-		}
-	}
-	AROMA_ASSERT( existRTV, _T( "Need at least one render target to set." ) );
-
-	// 深度ステンシルビュー.
-	ID3D11DepthStencilView* d3dDSV = nullptr;
-	if( dsv ) d3dDSV = dsv->GetNativeDepthStencilView();
-
-	// 設定.
-	_d3dContext->OMSetRenderTargets( rtvNum, d3dRTVs, d3dDSV );
-	memory::SafeDeleteArray( d3dRTVs );
-}
-//! @}
-
 //! @}
 
 //---------------------------------------------------------------------------
-//!	@brief		ネイティブAPI遅延コンテキストの取得.
+//	ネイティブAPI遅延コンテキストの取得.
 //---------------------------------------------------------------------------
 ID3D11DeviceContext* DeferredContext::GetNativeContext() const
 {
@@ -387,45 +553,171 @@ ID3D11DeviceContext* DeferredContext::GetNativeContext() const
 }
 
 //---------------------------------------------------------------------------
-//!	@brief		描画パイプラインを構築.
+//	描画パイプラインを構築.
 //---------------------------------------------------------------------------
 void DeferredContext::SyncDrawPipeline()
 {
+#ifdef AROMA_DEBUG
+	//-----------------------------------------------------------------------
+	// 警告表示.
+	//-----------------------------------------------------------------------
+	// IAステージ.
+	for( u32 i = 0; i < _inputLayout->GetStreamCount(); ++i )
+	{
+		if( _vertexBuffers[ i ] == nullptr )
+		{
+			// 要求されている頂点ストリームインデックスに頂点バッファが設定されていません.
+			// 動作が不定になる可能性があるので要求された頂点ストリーム数を満たすバッファを設定して下さい.
+			AROMA_ASSERT( false, _T( "[Warning] Vertex stream index %d has no vertex buffer set.\n" ), i );
+		}
+	}
+#endif
+
 	auto renderStateCache = _device->GetRenderStateCache();
 
-	// ブレンドステート.
-	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagBlendState ] )
+	//-----------------------------------------------------------------------
+	// IAステージ.
+	//-----------------------------------------------------------------------
+	// 入力レイアウト.
+	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagIAInputLayout ] )
 	{
-		_pipelineDirtyBits[ kPipelineDirtyBitFlagBlendState ] = false;
-
-		BlendStateKey key( _blendState );
-		auto	d3dBlendState = renderStateCache->GetNativeBlendState( key );
-		f32		blendFactor[ 4 ] = {};
-		_d3dContext->OMSetBlendState( d3dBlendState, blendFactor, 0xffffffff );
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagIAInputLayout ] = false;
+		_d3dContext->IASetInputLayout( _inputLayout->GetNativeInputLayout() );
 	}
 
-	// ラスタライザーステート.
-	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagRasterizerState ] )
+	// プリミティブタイプ.
+	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagIAPrimitiveType ] )
 	{
-		_pipelineDirtyBits[ kPipelineDirtyBitFlagRasterizerState ] = false;
-
-		RasterizerStateKey key( _rasterizerState );
-		auto	d3dRasterizerState = renderStateCache->GetNativeRasterizerState( key );
-		_d3dContext->RSSetState( d3dRasterizerState );
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagIAPrimitiveType ] = false;
+		_d3dContext->IASetPrimitiveTopology( ToNativePrimitiveType( _primitiveType ) );
 	}
 
-	// 深度ステンシルステート.
-	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagDepthStencilState ] )
+	// 頂点バッファ.
+	for( u32 i = 0; i < kInputStreamsMax; i++ )
 	{
-		_pipelineDirtyBits[ kPipelineDirtyBitFlagDepthStencilState ] = false;
-
-		DepthStencilStateKey key( _depthStencilState );
-		auto	d3dDepthStencilState = renderStateCache->GetNativeDepthStencilState( key );
-		// TODO: 0は仮, 参照ステンシル値を設定.
-		_d3dContext->OMSetDepthStencilState( d3dDepthStencilState, 0 );
+		u32 flagIdx	= kPipelineDirtyBitFlagIAVertexBuffer + i;
+		if( _pipelineDirtyBits[ flagIdx ] )
+		{
+			_pipelineDirtyBits[ flagIdx ] = false;
+			auto& vertexBuffer = _vertexBuffers[ i ];
+			if( vertexBuffer )
+			{
+				ID3D11Buffer*	d3dBuffers[] = { vertexBuffer->GetNativeBuffer() };
+				u32				strides[] = { _vertexBufferStrides[ i ] };
+				u32				offset[] = { _vertexBufferOffsets[ i ] };
+				_d3dContext->IASetVertexBuffers( i, 1, d3dBuffers, strides, offset );
+			}
+		}
 	}
 
-	// PSステージ : サンプラーステート.
+	// インデックスバッファ.
+	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagIAIndexBuffer ] )
+	{
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagIAIndexBuffer ] = false;
+
+		if( _indexBuffer )
+		{
+			DXGI_FORMAT d3dFortmat = DXGI_FORMAT_UNKNOWN;
+			switch( GetIndexTypeFromBufferStride( _indexBuffer->GetDesc().stride ) )
+			{
+				case IndexType::k16:
+					d3dFortmat = DXGI_FORMAT_R16_UINT;
+					break;
+				case IndexType::k32:
+					d3dFortmat = DXGI_FORMAT_R32_UINT;
+					break;
+				default:
+					AROMA_ASSERT( false, _T( "Undefined index type.\n" ) );
+					break;
+			}
+
+			_d3dContext->IASetIndexBuffer( _indexBuffer->GetNativeBuffer(), d3dFortmat, _indexBufferOffset );
+		}
+	}
+
+	//-----------------------------------------------------------------------
+	// VSステージ.
+	//-----------------------------------------------------------------------
+	// ピクセルシェーダー.
+	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagVSShader ] )
+	{
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagVSShader ] = false;
+		_d3dContext->VSSetShader( _vsShader->GetNativeVertexShader(), nullptr, 0 );
+	}
+
+	// シェーダーリソース.
+	for( u32 i = 0; i < kShaderResourceSlotMax; i++ )
+	{
+		u32 flagIdx = kPipelineDirtyBitFlagVSShaderResource + i;
+
+		if( _pipelineDirtyBits[ flagIdx ] )
+		{
+			_pipelineDirtyBits[ flagIdx ] = false;
+
+			if( !_vsShaderResources[ i ] ) continue;
+
+			ID3D11ShaderResourceView* const srvs[] = { _vsShaderResources[ i ]->GetNativeShaderResourceView() };
+			_d3dContext->VSSetShaderResources( i, 1, srvs );
+		}
+	}
+
+	// サンプラーステート.
+	for( u32 i = 0; i < kSamplerSlotMax; i++ )
+	{
+		u32 flagIdx = kPipelineDirtyBitFlagVSSamplerState + i;
+
+		if( _pipelineDirtyBits[ flagIdx ] )
+		{
+			_pipelineDirtyBits[ flagIdx ] = false;
+
+			SamplerStateKey key( _vsSamplerStates[ i ] );
+			auto	d3dSamplerState = renderStateCache->GetNativeSamplerState( key );
+			_d3dContext->VSSetSamplers( i, 1, &d3dSamplerState );
+		}
+	}
+
+	// 定数バッファ.
+	for( u32 i = 0; i < kShaderUniformBufferSlotMax; i++ )
+	{
+		u32 flagIdx	= kPipelineDirtyBitFlagVSConstantBuffer + i;
+		if( _pipelineDirtyBits[ flagIdx ] )
+		{
+			_pipelineDirtyBits[ flagIdx ] = false;
+
+			if( !_vsConstantBuffers[ i ] ) continue;
+
+			ID3D11Buffer* const cbs[] = { _vsConstantBuffers[ i ]->GetNativeBuffer() };
+			_d3dContext->VSSetConstantBuffers( i, 1, cbs );
+		}
+	}
+
+	//-----------------------------------------------------------------------
+	// PSステージ.
+	//-----------------------------------------------------------------------
+	// ピクセルシェーダー.
+	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagPSShader ] )
+	{
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagPSShader ] = false;
+		_d3dContext->PSSetShader( _psShader->GetNativePixelShader(), nullptr, 0 );
+	}
+
+	// シェーダーリソース.
+	for( u32 i = 0; i < kShaderResourceSlotMax; i++ )
+	{
+		u32 flagIdx = kPipelineDirtyBitFlagPSShaderResource + i;
+
+		if( _pipelineDirtyBits[ flagIdx ] )
+		{
+			_pipelineDirtyBits[ flagIdx ] = false;
+
+			if( !_psShaderResources[ i ] ) continue;
+
+			ID3D11ShaderResourceView* const srvs[] = { _psShaderResources[ i ]->GetNativeShaderResourceView() };
+			_d3dContext->PSSetShaderResources( i, 1, srvs );
+		}
+	}
+
+	// サンプラーステート.
 	for( u32 i = 0; i < kSamplerSlotMax; i++ )
 	{
 		u32 flagIdx = kPipelineDirtyBitFlagPSSamplerState + i;
@@ -438,6 +730,84 @@ void DeferredContext::SyncDrawPipeline()
 			auto	d3dSamplerState = renderStateCache->GetNativeSamplerState( key );
 			_d3dContext->PSSetSamplers( i, 1, &d3dSamplerState );
 		}
+	}
+
+	// 定数バッファ.
+	for( u32 i = 0; i < kShaderUniformBufferSlotMax; i++ )
+	{
+		u32 flagIdx	= kPipelineDirtyBitFlagPSConstantBuffer + i;
+		if( _pipelineDirtyBits[ flagIdx ] )
+		{
+			_pipelineDirtyBits[ flagIdx ] = false;
+
+			if( !_psConstantBuffers[ i ] ) continue;
+
+			ID3D11Buffer* const cbs[] = { _psConstantBuffers[ i ]->GetNativeBuffer() };
+			_d3dContext->PSSetConstantBuffers( i, 1, cbs );
+		}
+	}
+
+	//-----------------------------------------------------------------------
+	// RSステージ.
+	//-----------------------------------------------------------------------
+	// ラスタライザーステート.
+	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagRSRasterizerState ] )
+	{
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagRSRasterizerState ] = false;
+
+		RasterizerStateKey key( _rasterizerState );
+		auto	d3dRasterizerState = renderStateCache->GetNativeRasterizerState( key );
+		_d3dContext->RSSetState( d3dRasterizerState );
+	}
+
+	//-----------------------------------------------------------------------
+	// OMステージ.
+	//-----------------------------------------------------------------------
+	// レンダーターゲット.
+	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagOMRenderTarget ] )
+	{
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagOMRenderTarget ] = false;
+
+		ID3D11RenderTargetView* d3dRTVs[ kRenderTargetsSlotMax ] = {};
+		ID3D11DepthStencilView*	d3dDSV = nullptr;
+
+		for( u32 i = 0; i < kRenderTargetsSlotMax; ++i )
+		{
+			auto& rtv = _renderTargets[ i ];
+			if( rtv )
+			{
+				d3dRTVs[ i ] = rtv->GetNativeRenderTargetView();
+			}
+		}
+
+		if( _depthStencil )
+		{
+			d3dDSV = _depthStencil->GetNativeDepthStencilView();
+		}
+
+		_d3dContext->OMSetRenderTargets( kRenderTargetsSlotMax, d3dRTVs, d3dDSV );
+	}
+
+	// ブレンドステート.
+	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagOMBlendState ] )
+	{
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagOMBlendState ] = false;
+
+		BlendStateKey key( _blendState );
+		auto	d3dBlendState = renderStateCache->GetNativeBlendState( key );
+		f32		blendFactor[ 4 ] = {};
+		_d3dContext->OMSetBlendState( d3dBlendState, blendFactor, 0xffffffff );
+	}
+
+	// 深度ステンシルステート.
+	if( _pipelineDirtyBits[ kPipelineDirtyBitFlagOMDepthStencilState ] )
+	{
+		_pipelineDirtyBits[ kPipelineDirtyBitFlagOMDepthStencilState ] = false;
+
+		DepthStencilStateKey key( _depthStencilState );
+		auto	d3dDepthStencilState = renderStateCache->GetNativeDepthStencilState( key );
+		// TODO: 0は仮, 参照ステンシル値を設定.
+		_d3dContext->OMSetDepthStencilState( d3dDepthStencilState, 0 );
 	}
 }
 

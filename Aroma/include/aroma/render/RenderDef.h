@@ -28,9 +28,40 @@ namespace render {
 //---------------------------------------------------------------------------
 //! @{
 #ifdef AROMA_RENDER_DX11
-constexpr u32 		kRenderTargetMax				= D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
-constexpr u32		kSamplerSlotMax					= D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
-constexpr u32		kMipCountMax					= D3D11_REQ_MIP_LEVELS;
+//! レンダーターゲット設定スロット最大数.
+//! d3d11.h : D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT
+constexpr u32	kRenderTargetsSlotMax = 8;
+
+//! ビューポート設定スロット最大数.
+//! d3d11.h : D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE
+constexpr u32	kViewportsSlotMax = 16;
+
+//! 入力ストリーム最大数.
+//! d3d11.h : D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT
+constexpr u32	kInputStreamsMax = 32;
+
+//! 入力ストリーム毎の要素最大数.
+//! d3d11.h : D3D11_IA_VERTEX_INPUT_STRUCTURE_ELEMENT_COUNT
+constexpr u32	kInputElementsMax = 32;
+
+//! シェーダーリソース設定スロット最大数.
+//! d3d11.h : D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT
+constexpr u32	kShaderResourceSlotMax = 128;
+
+//! サンプラー設定スロット最大数.
+//! d3d11.h : D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT
+constexpr u32	kSamplerSlotMax = 16;
+
+//! 定数バッファ設定スロット最大数.
+//! d3d11.h : D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT
+constexpr u32	kShaderUniformBufferSlotMax = 14;
+
+//! テクスチャ数ミップレベル最大数.
+//! d3d11.h : D3D11_REQ_MIP_LEVELS
+constexpr u32	kMipCountMax = 15;
+
+#else
+#error Please define.
 #endif
 //! @}
 

@@ -58,7 +58,7 @@ void Texture::Initialize( Device* device, const Desc& desc )
 	d3dDesc.ArraySize			= desc.arrayCount;
 	d3dDesc.MipLevels			= desc.mipLevel;
 	d3dDesc.BindFlags			= ToNativeBindFlags( desc.bindFlags );
-	d3dDesc.CPUAccessFlags		= ToNativeCpuAccessFlag( GetCpuAccessFlag( desc.usage ) );
+	d3dDesc.CPUAccessFlags		= ToNativeCpuAccessFlag( GetCpuAccessFlags( desc.usage ) );
 	d3dDesc.Format				= ToNativePixelFormat( desc.format );
 	d3dDesc.SampleDesc.Count	= 1;
 	d3dDesc.SampleDesc.Quality	= 0;

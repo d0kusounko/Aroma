@@ -52,7 +52,7 @@ void Buffer::Initialize( Device* device, const Desc& desc )
 	d3dDesc.ByteWidth			= static_cast< u32 >( desc.size );
 	d3dDesc.Usage				= ToNativeUsage( desc.usage );
 	d3dDesc.BindFlags			= ToNativeBindFlags( desc.bindFlags );
-	d3dDesc.CPUAccessFlags		= ToNativeCpuAccessFlag( GetCpuAccessFlag( desc.usage ) );
+	d3dDesc.CPUAccessFlags		= ToNativeCpuAccessFlag( GetCpuAccessFlags( desc.usage ) );
 	d3dDesc.StructureByteStride	= static_cast< u32 >( desc.stride );
 
 	// 初期データ設定.

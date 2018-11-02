@@ -108,13 +108,54 @@ public:
 	void DrawIndexed( u32 indexNum, u32 startIndex, u32 baseVertexIndex = 0 );
 
 	//=======================================================================
+	//!	@name		IA: 入力アセンブラーステージ.
+	//=======================================================================
+	//! @{
+	//-----------------------------------------------------------------------
+	//!	@brief		入力レイアウト設定.
+	//-----------------------------------------------------------------------
+	void IASetInputLayout( InputLayout* inputLayout );
+
+	//-----------------------------------------------------------------------
+	//!	@brief		プリミティブタイプ設定.
+	//-----------------------------------------------------------------------
+	void IASetPrimitiveType( PrimitiveType primitiveType );
+
+	//-----------------------------------------------------------------------
+	//!	@brief		頂点バッファ設定.
+	//-----------------------------------------------------------------------
+	void IASetVertexBuffer( u32 slot, Buffer* vb, u32 stride, u32 offset );
+
+	//-----------------------------------------------------------------------
+	//!	@brief		インデックスバッファ設定.
+	//-----------------------------------------------------------------------
+	void IASetIndexBuffer( Buffer* indexBuffer, u32 offset );
+	//! @}
+
+	//=======================================================================
 	//!	@name		VS: 頂点シェーダーステージ.
 	//=======================================================================
 	//! @{
 	//-----------------------------------------------------------------------
 	//!	@brief		頂点シェーダー設定.
 	//-----------------------------------------------------------------------
-	void VSSetShader( const Shader* vs );
+	void VSSetShader( Shader* vs );
+
+	//-----------------------------------------------------------------------
+	//!	@brief		シェーダーリソース設定.
+	//-----------------------------------------------------------------------
+	void VSSetShaderResource( u32 slot, TextureView* srv );
+
+	//-----------------------------------------------------------------------
+	//!	@brief		サンプラーステート設定.
+	//-----------------------------------------------------------------------
+	template< class T >
+	inline void VSSetSamplerState( u32 slot, SamplerState::Setting state, T value );
+
+	//-----------------------------------------------------------------------
+	//!	@brief		定数バッファ設定.
+	//-----------------------------------------------------------------------
+	void VSSetConstantBuffer( u32 slot, Buffer* cb );
 	//! @}
 
 	//=======================================================================
@@ -124,7 +165,12 @@ public:
 	//-----------------------------------------------------------------------
 	//!	@brief		ピクセルシェーダー設定.
 	//-----------------------------------------------------------------------
-	void PSSetShader( const Shader* ps );
+	void PSSetShader( Shader* ps );
+
+	//-----------------------------------------------------------------------
+	//!	@brief		シェーダーリソース設定.
+	//-----------------------------------------------------------------------
+	void PSSetShaderResource( u32 slot, TextureView* srv );
 
 	//-----------------------------------------------------------------------
 	//!	@brief		サンプラーステート設定.
@@ -133,40 +179,9 @@ public:
 	inline void PSSetSamplerState( u32 slot, SamplerState::Setting state, T value );
 
 	//-----------------------------------------------------------------------
-	//!	@brief		シェーダーリソース設定.
-	//-----------------------------------------------------------------------
-	void PSSetShaderResource( u32 slot, const TextureView* srv );
-
-	//-----------------------------------------------------------------------
 	//!	@brief		定数バッファ設定.
 	//-----------------------------------------------------------------------
-	void PSSetConstantBuffer( u32 slot, const Buffer* cb );
-	//! @}
-
-	//=======================================================================
-	//!	@name		IA: 入力アセンブラーステージ.
-	//=======================================================================
-	//! @{
-	//-----------------------------------------------------------------------
-	//!	@brief		入力レイアウト設定.
-	//-----------------------------------------------------------------------
-	void IASetInputLayout( const InputLayout* inputLayout );
-
-	//-----------------------------------------------------------------------
-	//!	@brief		プリミティブタイプ設定.
-	//-----------------------------------------------------------------------
-	void IASetPrimitiveType( const PrimitiveType primitiveType );
-
-	//-----------------------------------------------------------------------
-	//!	@brief		頂点バッファ設定.
-	//-----------------------------------------------------------------------
-	void IASetVertexBuffers( u32 startStreamIdx, u32 bufferNum, Buffer* const* buffers, const u32* strides, const u32* offsets );
-
-	//-----------------------------------------------------------------------
-	//!	@brief		インデックスバッファ設定.
-	//-----------------------------------------------------------------------
-	void IASetIndexBuffer( const Buffer* indexBuffer, u32 offset );
-
+	void PSSetConstantBuffer( u32 slot, Buffer* cb );
 	//! @}
 
 	//=======================================================================
@@ -198,6 +213,16 @@ public:
 	//!	@brief		出力先レンダーターゲット設定.
 	//-----------------------------------------------------------------------
 	void OMSetRenderTargets( u32 rtvNum, TextureView* const* rtvs, TextureView* dsv );
+	
+	//-----------------------------------------------------------------------
+	//!	@brief		設定済み出力先レンダーターゲット取得.
+	//-----------------------------------------------------------------------
+	void OMGetRenderTargets( u32 count, TextureView** outRTVs ) const;
+
+	//-----------------------------------------------------------------------
+	//!	@brief		設定済み深度ステンシルターゲット取得.
+	//-----------------------------------------------------------------------
+	TextureView* OMGetDepthStencilTarget() const;
 
 	//-----------------------------------------------------------------------
 	//!	@brief		ブレンドステート設定.
@@ -227,11 +252,35 @@ private:
 	//-----------------------------------------------------------------------
 	enum PipelineDirtyBitFlag
 	{
-		kPipelineDirtyBitFlagBlendState,			//!< ブレンドステート.
-		kPipelineDirtyBitFlagRasterizerState,		//!< ラスタライザーステート.
-		kPipelineDirtyBitFlagDepthStencilState,		//!< 深度ステンシルステート.
+		kPipelineDirtyBitFlagIAInputLayout,			//!< IAステージ : 入力レイアウト.
+		kPipelineDirtyBitFlagIAPrimitiveType,		//!< IAステージ : プリミティブタイプ.
+		kPipelineDirtyBitFlagIAVertexBuffer,		//!< IAステージ : 頂点バッファ.
+		kPipelineDirtyBitFlagIAVertexBufferEnd = kPipelineDirtyBitFlagIAVertexBuffer + kInputStreamsMax - 1,
+		kPipelineDirtyBitFlagIAIndexBuffer,			//!< IAステージ : インデックスバッファ.
+
+		kPipelineDirtyBitFlagVSShader,				//!< VSステージ : シェーダー.
+		kPipelineDirtyBitFlagVSShaderResource,		//!< VSステージ : シェーダーリソース.
+		kPipelineDirtyBitFlagVSShaderResourceEnd = kPipelineDirtyBitFlagVSShaderResource + kShaderResourceSlotMax - 1,
+		kPipelineDirtyBitFlagVSSamplerState,		//!< VSステージ : サンプラーステート.
+		kPipelineDirtyBitFlagVSSamplerStateEnd = kPipelineDirtyBitFlagVSSamplerState + kSamplerSlotMax - 1,
+		kPipelineDirtyBitFlagVSConstantBuffer,		//!< VSステージ : 定数バッファ.
+		kPipelineDirtyBitFlagVSConstantBufferEnd = kPipelineDirtyBitFlagVSConstantBuffer + kShaderUniformBufferSlotMax - 1,
+
+		kPipelineDirtyBitFlagPSShader,				//!< PSステージ : シェーダー.
+		kPipelineDirtyBitFlagPSShaderResource,		//!< PSステージ : シェーダーリソース.
+		kPipelineDirtyBitFlagPSShaderResourceEnd = kPipelineDirtyBitFlagPSShaderResource + kShaderResourceSlotMax - 1,
 		kPipelineDirtyBitFlagPSSamplerState,		//!< PSステージ : サンプラーステート.
 		kPipelineDirtyBitFlagPSSamplerStateEnd = kPipelineDirtyBitFlagPSSamplerState + kSamplerSlotMax - 1,
+		kPipelineDirtyBitFlagPSConstantBuffer,		//!< PSステージ : 定数バッファ.
+		kPipelineDirtyBitFlagPSConstantBufferEnd = kPipelineDirtyBitFlagPSConstantBuffer + kShaderUniformBufferSlotMax - 1,
+
+		kPipelineDirtyBitFlagRSRasterizerState,		//!< RSステージ: ラスタライザーステート.
+		kPipelineDirtyBitFlagRSViewportScissorState,//!< RSステージ: ビューポートシザーステート.
+
+		kPipelineDirtyBitFlagOMRenderTarget,		//!< OMステージ: レンダーターゲット.
+		kPipelineDirtyBitFlagOMBlendState,			//!< OMステージ: ブレンドステート.
+		kPipelineDirtyBitFlagOMDepthStencilState,	//!< OMステージ: 深度ステンシルステート.
+
 		kPipelineDirtyBitFlagNum,
 	};
 
@@ -251,10 +300,37 @@ private:
 	Desc					_desc;
 	bool					_begin;
 	PiplineDirtyBits		_pipelineDirtyBits;
-	BlendState				_blendState;
-	RasterizerState			_rasterizerState;
-	DepthStencilState		_depthStencilState;
+
+	// IAステージ.
+	Buffer*					_vertexBuffers[ kInputStreamsMax ];
+	u32						_vertexBufferStrides[ kInputStreamsMax ];
+	u32						_vertexBufferOffsets[ kInputStreamsMax ];
+	Buffer*					_indexBuffer;
+	u32						_indexBufferOffset;
+	PrimitiveType			_primitiveType;
+	InputLayout*			_inputLayout;
+
+	// VSステージ.
+	Shader*					_vsShader;
+	TextureView* 			_vsShaderResources[ kShaderResourceSlotMax ];
+	Buffer*					_vsConstantBuffers[ kShaderUniformBufferSlotMax ];
+	SamplerState			_vsSamplerStates[ kSamplerSlotMax ];
+
+	// PSステージ.
+	Shader*					_psShader;
+	TextureView* 			_psShaderResources[ kShaderResourceSlotMax ];
+	Buffer*					_psConstantBuffers[ kShaderUniformBufferSlotMax ];
 	SamplerState			_psSamplerStates[ kSamplerSlotMax ];
+
+	// RSステージ.
+	RasterizerState			_rasterizerState;
+	// ViewportScissorState	_viewportScissorState;
+
+	// OMステージ.
+	TextureView*			_renderTargets[ kRenderTargetsSlotMax ];
+	TextureView*			_depthStencil;
+	BlendState				_blendState;
+	DepthStencilState		_depthStencilState;
 
 #ifdef AROMA_RENDER_DX11
 	ID3D11DeviceContext*	_d3dContext;
@@ -267,23 +343,33 @@ private:
 // Inline Functions
 //---------------------------------------------------------------------------
 template< class T >
-void DeferredContext::OMSetBlendState( BlendState::Setting state, T value )
+void DeferredContext::RSSetRasterizerState( RasterizerState::Setting state, T value )
 {
-	if( _blendState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagBlendState ] = true;
+	if( _rasterizerState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagRSRasterizerState ] = true;
 }
 
 template< class T >
-void DeferredContext::RSSetRasterizerState( RasterizerState::Setting state, T value )
+void DeferredContext::OMSetBlendState( BlendState::Setting state, T value )
 {
-	if( _rasterizerState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagRasterizerState ] = true;
+	if( _blendState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagOMBlendState ] = true;
 }
 
 template< class T >
 void DeferredContext::OMSetDepthStencilState( DepthStencilState::Setting state, T value )
 {
-	if( _depthStencilState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagDepthStencilState ] = true;
+	if( _depthStencilState.Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagOMDepthStencilState ] = true;
 }
 
+template< class T >
+void DeferredContext::VSSetSamplerState( u32 slot, SamplerState::Setting state, T value )
+{
+	if( slot >= kSamplerSlotMax )
+	{
+		AROMA_ASSERT( false, _T( "Slot is out of range.\n" ) );
+		return;
+	}
+	if( _vsSamplerStates[ slot ].Set( state, value ) ) _pipelineDirtyBits[ kPipelineDirtyBitFlagVSSamplerState + slot ] = true;
+}
 
 template< class T >
 void DeferredContext::PSSetSamplerState( u32 slot, SamplerState::Setting state, T value )
