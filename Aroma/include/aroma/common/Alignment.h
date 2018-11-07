@@ -35,16 +35,6 @@
 
 #else
 
-#define AROMA_ALIGN32_BEGIN
-#define AROMA_ALIGN32_END		__attribute__( aligned(32) )
-#define AROMA_ALIGN16_BEGIN
-#define AROMA_ALIGN16_END		__attribute__( aligned(16) )
-#define AROMA_ALIGN8_BEGIN
-#define AROMA_ALIGN8_END		__attribute__( aligned( 8) )
-#define AROMA_ALIGN4_BEGIN
-#define AROMA_ALIGN4_END		__attribute__( aligned( 4) )
-
-#else
 #error Undefined platform.
 #endif
 
