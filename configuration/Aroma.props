@@ -3,12 +3,12 @@
 	<ImportGroup Label="PropertySheets" />
 
 	<!-- シェーダーコンパイルバイナリ格納パス. -->
-	<PropertyGroup Label="UserMacros" Condition="'$(PlatformTarget)'=='x64'">
+	<PropertyGroup Label="UserMacros" Condition="'$(PlatformShortName)'=='x64'">
 		<AromaShaderCompilerPath>$(WindowsSDK_ExecutablePath_x64)</AromaShaderCompilerPath>
 	</PropertyGroup>
 	<PropertyGroup />
 
-	<PropertyGroup Label="UserMacros" Condition="'$(PlatformTarget)'=='x86'">
+	<PropertyGroup Label="UserMacros" Condition="'$(PlatformShortName)'=='x86'">
 		<AromaShaderCompilerPath>$(WindowsSDK_ExecutablePath_x86)</AromaShaderCompilerPath>
 	</PropertyGroup>
 	<PropertyGroup />

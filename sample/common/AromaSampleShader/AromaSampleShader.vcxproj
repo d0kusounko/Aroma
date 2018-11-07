@@ -22,37 +22,37 @@
     <CustomBuild Include="shader\PsSimple.hlsl">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_DX11|Win32'">cscript //nologo $(SolutionDir)..\..\AromaShaderCompiler\script\ShaderCompiler.js ^
-    $(PlatformTarget) ^
+    $(PlatformShortName) ^
     $(ConfigurationName) ^
     "$(AromaShaderCompilerPath)" ^
     ps ^
     "%(FullPath)" ^
-    "$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash"</Command>
+    "$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|Win32'">cscript //nologo $(SolutionDir)..\..\AromaShaderCompiler\script\ShaderCompiler.js ^
-    $(PlatformTarget) ^
+    $(PlatformShortName) ^
     $(ConfigurationName) ^
     "$(AromaShaderCompilerPath)" ^
     ps ^
     "%(FullPath)" ^
-    "$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash"</Command>
+    "$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_DX11|x64'">cscript //nologo $(SolutionDir)..\..\AromaShaderCompiler\script\ShaderCompiler.js ^
-    $(PlatformTarget) ^
+    $(PlatformShortName) ^
     $(ConfigurationName) ^
     "$(AromaShaderCompilerPath)" ^
     ps ^
     "%(FullPath)" ^
-    "$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash"</Command>
+    "$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|x64'">cscript //nologo $(SolutionDir)..\..\AromaShaderCompiler\script\ShaderCompiler.js ^
-    $(PlatformTarget) ^
+    $(PlatformShortName) ^
     $(ConfigurationName) ^
     "$(AromaShaderCompilerPath)" ^
     ps ^
     "%(FullPath)" ^
-    "$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DX11|Win32'">$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|Win32'">$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DX11|x64'">$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|x64'">$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash</Outputs>
+    "$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DX11|Win32'">$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|Win32'">$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DX11|x64'">$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|x64'">$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release_DX11|Win32'">
       </Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|Win32'">
@@ -65,37 +65,37 @@
     <CustomBuild Include="shader\VsSimple.hlsl">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_DX11|Win32'">cscript //nologo $(SolutionDir)..\..\AromaShaderCompiler\script\ShaderCompiler.js ^
-    $(PlatformTarget) ^
+    $(PlatformShortName) ^
     $(ConfigurationName) ^
     "$(AromaShaderCompilerPath)" ^
     vs ^
     "%(FullPath)" ^
-    "$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash"</Command>
+    "$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|Win32'">cscript //nologo $(SolutionDir)..\..\AromaShaderCompiler\script\ShaderCompiler.js ^
-    $(PlatformTarget) ^
+    $(PlatformShortName) ^
     $(ConfigurationName) ^
     "$(AromaShaderCompilerPath)" ^
     vs ^
     "%(FullPath)" ^
-    "$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash"</Command>
+    "$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_DX11|x64'">cscript //nologo $(SolutionDir)..\..\AromaShaderCompiler\script\ShaderCompiler.js ^
-    $(PlatformTarget) ^
+    $(PlatformShortName) ^
     $(ConfigurationName) ^
     "$(AromaShaderCompilerPath)" ^
     vs ^
     "%(FullPath)" ^
-    "$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash"</Command>
+    "$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|x64'">cscript //nologo $(SolutionDir)..\..\AromaShaderCompiler\script\ShaderCompiler.js ^
-    $(PlatformTarget) ^
+    $(PlatformShortName) ^
     $(ConfigurationName) ^
     "$(AromaShaderCompilerPath)" ^
     vs ^
     "%(FullPath)" ^
-    "$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DX11|Win32'">$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|Win32'">$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DX11|x64'">$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|x64'">$(ProjectDir)build\shader\$(PlatformTarget)\$(ConfigurationName)\%(Filename).ash</Outputs>
+    "$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DX11|Win32'">$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|Win32'">$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_DX11|x64'">$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|x64'">$(ProjectDir)build\shader\$(PlatformShortName)\$(ConfigurationName)\%(Filename).ash</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release_DX11|Win32'">
       </Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug_DX11|Win32'">
