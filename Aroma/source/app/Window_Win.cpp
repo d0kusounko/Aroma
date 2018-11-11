@@ -26,20 +26,29 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wp, LPARAM lp )
 	auto window = WindowManager::GetWindow( hWnd );
 	switch( msg )
 	{
+		// M2_TODO: ウィンドウ作成時.
+		case WM_CREATE:
+		{
+			break;
+		}
+
 		// 消去時.
 		case WM_DESTROY:
 		{
-			auto callback = window->GetMessageCallback( WindowMessage::kDestroy );
-			if( callback )
+			if( window )
 			{
-				// コールバック.
-				callback->func( nullptr, callback->userParam );
-			}
+				auto callback = window->GetMessageCallback( WindowMessage::kDestroy );
+				if( callback )
+				{
+					// コールバック.
+					callback->func( nullptr, callback->userParam );
+				}
 
-			if( CheckFlags( window->GetFlags(), kWindowFlagDestroyPostQuit ) )
-			{
-				// アプリ終了メッセージを送出.
-				PostQuitMessage( 0 );
+				if( CheckFlags( window->GetFlags(), kWindowFlagDestroyPostQuit ) )
+				{
+					// アプリ終了メッセージを送出.
+					PostQuitMessage( 0 );
+				}
 			}
 			break;
 		}
@@ -47,51 +56,77 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wp, LPARAM lp )
 		// 閉じようとした.
 		case WM_CLOSE:
 		{
-			auto callback = window->GetMessageCallback( WindowMessage::kClose );
-			if( callback )
+			if( window )
 			{
-				// コールバック.
-				callback->func( nullptr, callback->userParam );
-			}
+				auto callback = window->GetMessageCallback( WindowMessage::kClose );
+				if( callback )
+				{
+					// コールバック.
+					callback->func( nullptr, callback->userParam );
+				}
 			
-			if( !CheckFlags( window->GetFlags(), kWindowFlagCloseMessageNotDestory ) )
-			{
-				// ウィンドウを削除.
-				window->Destory();
+				if( !CheckFlags( window->GetFlags(), kWindowFlagCloseMessageNotDestory ) )
+				{
+					// ウィンドウを削除.
+					window->Destory();
+				}
 			}
-			return 0;
+			return 0;	// 自動的に削除しないようにするためreturn
+		}
+		
+		// 座標移動時.
+		case WM_MOVE:
+		{
+			if( window )
+			{
+				auto callback = window->GetMessageCallback( WindowMessage::kMove );
+				if( callback )
+				{
+					// 固有パラメータ作成.
+					WindowMessageCallbackParamMove param;
+					param.x	= lp & 0xFFFF;			// 移動後座標X.
+					param.y	= (lp >> 16) & 0xFFFF;	// 移動後座標Y.
+
+					// コールバック.
+					callback->func( &param, callback->userParam );
+				}
+			}
+			break;
 		}
 
 		// サイズ変更.
 		case WM_SIZE:
 		{
-			auto callback = window->GetMessageCallback( WindowMessage::kSize );
-			if( callback )
+			if( window )
 			{
-				// 固有パラメータ作成.
-				WindowMessageCallbackParamSize param;
-
-				switch( wp )	// サイズ変更のタイプ.
+				auto callback = window->GetMessageCallback( WindowMessage::kSize );
+				if( callback )
 				{
-				case SIZE_MINIMIZED:
-					param.action	= WindowSizeAction::kMinimized;
-					break;
-				case SIZE_MAXIMIZED:
-					param.action	= WindowSizeAction::kMaximized;
-					break;
+					// 固有パラメータ作成.
+					WindowMessageCallbackParamSize param;
 
-				// MEMO: SIZE_MAXSHOW, SIZE_MAXHIDE の来る条件がよくわからないので,
-				//		 もし来た場合は通常処理としてますが, 必要になった場合は,
-				//		 WindowSizeAction にアクションを追加してちゃんと対応して下さい.
-				default:
-					param.action	= WindowSizeAction::kNormal;
-					break;
+					switch( wp )	// サイズ変更のタイプ.
+					{
+					case SIZE_MINIMIZED:
+						param.action	= WindowSizeAction::kMinimized;
+						break;
+					case SIZE_MAXIMIZED:
+						param.action	= WindowSizeAction::kMaximized;
+						break;
+
+					// MEMO: SIZE_MAXSHOW, SIZE_MAXHIDE の来る条件がよくわからないので,
+					//		 もし来た場合は通常処理としてますが, 必要になった場合は,
+					//		 WindowSizeAction にアクションを追加してちゃんと対応して下さい.
+					default:
+						param.action	= WindowSizeAction::kNormal;
+						break;
+					}
+					param.size.width	= lp & 0xFFFF;			// 変更後Xサイズ.
+					param.size.height	= (lp >> 16) & 0xFFFF;	// 変更後Yサイズ.
+
+					// コールバック.
+					callback->func( &param, callback->userParam );
 				}
-				param.size.width	= lp & 0xFFFF;			// 変更後Xサイズ.
-				param.size.height	= (lp >> 16) & 0xFFFF;	// 変更後Yサイズ.
-
-				// コールバック.
-				callback->func( &param, callback->userParam );
 			}
 			break;
 		}
@@ -178,11 +213,8 @@ Window* Window::Create( const CreateConfig& config )
 
 	// ウィンドウ表示.
 	ShowWindow( hWnd, SW_SHOWNORMAL );
-	UpdateWindow( hWnd );
-
-	// フォーカス設定.
 	SetFocus( hWnd );
-
+	// UpdateWindow( hWnd );
 
 	return window;
 }

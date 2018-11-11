@@ -38,6 +38,7 @@ enum class WindowMessage
 {
 	kDestroy,	//!< ウィンドウ消去.
 	kClose,		//!< 閉じようとした.
+	kMove,		//!< 座標移動.
 	kSize,		//!< サイズ変更.
 	kNum,
 };
@@ -86,6 +87,13 @@ struct WindowMessageCallback
 //!	@name		ウィンドウメッセージ別コールバックパラメータ.
 //---------------------------------------------------------------------------
 // @{
+//! 座標移動時パラメータ.
+struct WindowMessageCallbackParamMove
+{
+	s32		x;	//!< 移動後座標X.
+	s32		y;	//!< 移動後座標Y.
+};
+
 //! サイズ変更時パラメータ.
 struct WindowMessageCallbackParamSize
 {

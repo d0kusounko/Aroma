@@ -156,13 +156,13 @@ namespace
 	void UpdateDoudesukaShake();
 }
 
-// TODO: ウィンドウリサイズコールバックテスト　あとで消す.
+// TODO: ウィンドウ座標移動コールバックテスト　あとで消す.
 void TestCallback( const void* messageParam, void* userParam )
 {
-	auto param = static_cast< const app::WindowMessageCallbackParamSize* >( messageParam );
+	auto param = static_cast< const app::WindowMessageCallbackParamMove* >( messageParam );
 	if( param )
 	{
-		AROMA_DEBUG_OUT( "type = %d, x = %d, y = %d\n", ( s32 )param->action, param->size.width, param->size.height );
+		AROMA_DEBUG_OUT( "x = %d, y = %d\n", param->x, param->y );
 	}
 }
 
@@ -178,7 +178,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		app::Window::CreateConfig config;
 		config.windowTitle	= _T( "AromaSample Render Initialize" );
 		config.size			= kSampleScreenSize;
-		config.callbacks[ ( u32 )app::WindowMessage::kSize ].func = TestCallback;
+		config.callbacks[ ( u32 )app::WindowMessage::kMove ].func = TestCallback;
 		OnFlags( config.flags, app::kWindowFlagDestroyPostQuit );
 		g_window			= app::Window::Create( config );
 	}
