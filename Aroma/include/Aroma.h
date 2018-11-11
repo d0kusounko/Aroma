@@ -54,6 +54,8 @@
 #include "aroma/render/SwapChain.h"
 #include "aroma/render/Texture.h"
 #include "aroma/render/TextureView.h"
+#include "aroma/render/RenderTargetView.h"
+#include "aroma/render/DepthStencilView.h"
 #include "aroma/render/DeferredContext.h"
 #include "aroma/render/CommandList.h"
 #include "aroma/render/Buffer.h"

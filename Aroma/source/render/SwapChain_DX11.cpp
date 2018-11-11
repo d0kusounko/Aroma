@@ -12,7 +12,7 @@
 #include <aroma/render/SwapChain.h>
 #include <aroma/render/Device.h>
 #include <aroma/render/Texture.h>
-#include <aroma/render/TextureView.h>
+#include <aroma/render/RenderTargetView.h>
 #include <aroma/app/App.h>
 
 namespace aroma {
@@ -25,7 +25,7 @@ SwapChain::SwapChain()
 	: _initialized( false )
 	, _device( nullptr )
 	, _buffers( nullptr )
-	, _bufferViews( nullptr )
+	, _bufferRTVs( nullptr )
 	, _bufferIndex( 0 )
 	, _d3dSwapChain( nullptr )
 {
@@ -81,8 +81,8 @@ void SwapChain::Initialize( Device* device, const Desc& desc )
 
 	// スワップチェインのバッファよりAromaテクスチャバッファを作成.
 	{
-		_buffers		= new Texture*[ desc.bufferCount ];
-		_bufferViews	= new TextureView*[ desc.bufferCount ];
+		_buffers	= new Texture*[ desc.bufferCount ];
+		_bufferRTVs	= new RenderTargetView*[ desc.bufferCount ];
 
 		// DXGI_SWAP_EFFECT_DISCARD なので, 0番目のバッファを使い回す.
 		ID3D11Texture2D* d3dBuffer;
@@ -92,7 +92,7 @@ void SwapChain::Initialize( Device* device, const Desc& desc )
 		for( u32 i = 0; i < desc.bufferCount; ++i )
 		{
 			_buffers[ i ]		= nullptr;
-			_bufferViews[ i ]	= nullptr;
+			_bufferRTVs[ i ]	= nullptr;
 
 			// 取得したネイティブAPIバッファからAromaテクスチャバッファ作成.
 			{
@@ -100,12 +100,13 @@ void SwapChain::Initialize( Device* device, const Desc& desc )
 				_buffers[ i ]->InitializeFromNativeTexture( _device, d3dBuffer );
 			}
 
-			// テクスチャビュー作成.
+			// レンダーターゲットビュー作成.
 			{
-				_bufferViews[ i ] = new TextureView();
-				TextureView::Desc desc;
-				desc.texture = _buffers[ i ];
-				_bufferViews[ i ]->Initialize( _device, desc );
+				_bufferRTVs[ i ] = new RenderTargetView();
+				RenderTargetView::Desc desc;
+				desc.texture	= _buffers[ i ];
+				desc.mipLevel	= 0;
+				_bufferRTVs[ i ]->Initialize( _device, desc );
 			}
 		}
 		memory::SafeRelease( d3dBuffer );
@@ -125,10 +126,10 @@ void SwapChain::Finalize()
 
 	for( u32 i = 0; i < _desc.bufferCount; ++i )
 	{
-		memory::SafeRelease( _bufferViews[ i ] );
+		memory::SafeRelease( _bufferRTVs[ i ] );
 		memory::SafeRelease( _buffers[ i ] );
 	}
-	memory::SafeDelete( _bufferViews );
+	memory::SafeDelete( _bufferRTVs );
 	memory::SafeDelete( _buffers );
 	memory::SafeRelease( _d3dSwapChain );
 	memory::SafeRelease( _device );
@@ -178,11 +179,11 @@ void SwapChain::GetBuffer( u32 index, Texture** outResource ) const
 //-----------------------------------------------------------------------
 //! @brief		 バッファビュー取得.
 //-----------------------------------------------------------------------
-void SwapChain::GetBufferView( u32 index, TextureView** outResource ) const
+void SwapChain::GetBufferView( u32 index, RenderTargetView** outResource ) const
 {
 	AROMA_ASSERT( index < _desc.bufferCount, "index is out of range" );
 
-	(*outResource) = _bufferViews[ index ];
+	(*outResource) = _bufferRTVs[ index ];
 	(*outResource)->AddRef();
 }
 

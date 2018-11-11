@@ -172,6 +172,7 @@
     <ClCompile Include="source\render\CommandList_DX11.cpp" />
     <ClCompile Include="source\render\DeferredContext_DX11.cpp" />
     <ClCompile Include="source\render\DepthStencilState.cpp" />
+    <ClCompile Include="source\render\DepthStencilView_DX11.cpp" />
     <ClCompile Include="source\render\Device_DX11.cpp" />
     <ClCompile Include="source\render\InputLayout_DX11.cpp" />
     <ClCompile Include="source\render\MemoryAllocator.cpp" />
@@ -179,11 +180,12 @@
     <ClCompile Include="source\render\Render.cpp" />
     <ClCompile Include="source\render\RenderDef_DX11.cpp" />
     <ClCompile Include="source\render\RenderStateCache_DX11.cpp" />
+    <ClCompile Include="source\render\RenderTargetView_DX11.cpp" />
     <ClCompile Include="source\render\Resource_DX11.cpp" />
     <ClCompile Include="source\render\SamplerState.cpp" />
+    <ClCompile Include="source\render\TextureView_DX11.cpp" />
     <ClCompile Include="source\render\Shader_DX11.cpp" />
     <ClCompile Include="source\render\SwapChain_DX11.cpp" />
-    <ClCompile Include="source\render\TextureView_DX11.cpp" />
     <ClCompile Include="source\render\Texture_DX11.cpp" />
     <ClCompile Include="source\render\ViewportScissorState.cpp" />
     <ClCompile Include="source\util\Singleton.cpp" />
@@ -218,6 +220,7 @@
     <ClInclude Include="include\aroma\render\CommandList.h" />
     <ClInclude Include="include\aroma\render\DeferredContext.h" />
     <ClInclude Include="include\aroma\render\DepthStencilState.h" />
+    <ClInclude Include="include\aroma\render\DepthStencilView.h" />
     <ClInclude Include="include\aroma\render\Device.h" />
     <ClInclude Include="include\aroma\render\InputLayout.h" />
     <ClInclude Include="include\aroma\render\MemoryAllocator.h" />
@@ -225,12 +228,13 @@
     <ClInclude Include="include\aroma\render\Render.h" />
     <ClInclude Include="include\aroma\render\RenderDef.h" />
     <ClInclude Include="include\aroma\render\RenderStateCache.h" />
+    <ClInclude Include="include\aroma\render\RenderTargetView.h" />
     <ClInclude Include="include\aroma\render\Resource.h" />
     <ClInclude Include="include\aroma\render\SamplerState.h" />
     <ClInclude Include="include\aroma\render\Shader.h" />
+    <ClInclude Include="include\aroma\render\TextureView.h" />
     <ClInclude Include="include\aroma\render\SwapChain.h" />
     <ClInclude Include="include\aroma\render\Texture.h" />
-    <ClInclude Include="include\aroma\render\TextureView.h" />
     <ClInclude Include="include\aroma\render\ViewportScissorState.h" />
     <ClInclude Include="include\aroma\util\NonCopyable.h" />
     <ClInclude Include="include\aroma\util\Singleton.h" />

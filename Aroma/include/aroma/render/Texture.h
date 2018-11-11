@@ -1,7 +1,7 @@
 ﻿//===========================================================================
 //!
 //!	@file		Texture.h
-//!	@brief		テクスチャ.
+//!	@brief		テクスチャー.
 //!
 //!	@author		Copyright (C) DebugCurry. All rights reserved.
 //!	@author		d0
@@ -17,7 +17,7 @@ namespace render {
 class Device;
 
 //---------------------------------------------------------------------------
-//!	@brief	テクスチャ.
+//!	@brief	テクスチャー.
 //---------------------------------------------------------------------------
 class Texture : public IResource
 {
@@ -28,7 +28,7 @@ public:
 	struct Desc
 	{
 		data::ImageSize		size;				//!< 画素数.
-		s32					mipLevel;			//!< ミップマップ数.
+		s32					mipCount;			//!< ミップマップ数.
 		data::PixelFormat	format;				//!< ピクセルフォーマット.
 		Usage				usage;				//!< 用途(メモリ配置).
 		s32					arrayCount;			//!< テクスチャ配列個数.
@@ -42,7 +42,7 @@ public:
 		{
 			size.width			= 0;
 			size.height			= 0;
-			mipLevel			= 1;
+			mipCount			= 1;
 			format				= data::PixelFormat::kR8G8B8A8Unorm;
 			usage				= Usage::kDefault;
 			arrayCount			= 1;

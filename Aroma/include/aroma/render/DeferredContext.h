@@ -28,6 +28,8 @@ namespace render {
 class Device;
 class Texture;
 class TextureView;
+class RenderTargetView;
+class DepthStencilView;
 class CommandList;
 class Shader;
 class InputLayout;
@@ -91,7 +93,7 @@ public:
 	//-----------------------------------------------------------------------
 	//!	@brief		レンダーターゲットを指定カラーでクリア.
 	//-----------------------------------------------------------------------
-	void ClearRenderTarget( TextureView* rtv, const data::Color& color );
+	void ClearRenderTarget( RenderTargetView* rtv, const data::Color& color );
 
 	//-----------------------------------------------------------------------
 	//! @brief		描画.
@@ -209,17 +211,17 @@ public:
 	//-----------------------------------------------------------------------
 	//!	@brief		出力先レンダーターゲット設定.
 	//-----------------------------------------------------------------------
-	void OMSetRenderTargets( u32 rtvNum, TextureView* const* rtvs, TextureView* dsv );
+	void OMSetRenderTargets( u32 rtvNum, RenderTargetView* const* rtvs, DepthStencilView* dsv );
 
 	//-----------------------------------------------------------------------
 	//!	@brief		設定済み出力先レンダーターゲット取得.
 	//-----------------------------------------------------------------------
-	void OMGetRenderTargets( u32 count, TextureView** outRTVs ) const;
+	void OMGetRenderTargets( u32 count, RenderTargetView** outRTVs ) const;
 
 	//-----------------------------------------------------------------------
 	//!	@brief		設定済み深度ステンシルターゲット取得.
 	//-----------------------------------------------------------------------
-	TextureView* OMGetDepthStencilTarget() const;
+	DepthStencilView* OMGetDepthStencilTarget() const;
 
 	//-----------------------------------------------------------------------
 	//!	@brief		ブレンドステート設定.
@@ -324,8 +326,8 @@ private:
 	ViewportScissorState	_viewportScissorState;
 
 	// OMステージ.
-	TextureView*			_renderTargets[ kRenderTargetsSlotMax ];
-	TextureView*			_depthStencil;
+	RenderTargetView*		_renderTargets[ kRenderTargetsSlotMax ];
+	DepthStencilView*		_depthStencil;
 	BlendState				_blendState;
 	DepthStencilState		_depthStencilState;
 

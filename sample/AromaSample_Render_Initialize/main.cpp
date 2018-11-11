@@ -131,7 +131,7 @@ namespace
 	render::Shader*				g_pixelShader		= nullptr;
 	render::InputLayout*		g_inputLayout		= nullptr;
 	render::Buffer*				g_indexBuffer		= nullptr;
-	render::TextureView*		g_backBufferView[ kSwapChainBufferNum ] = {};
+	render::RenderTargetView*	g_backBufferView[ kSwapChainBufferNum ] = {};
 	render::Buffer*				g_constBuffer[ kBufferingCount ] = {};
 	f32							g_mipLevel			= 0.0f;
 	data::Color					g_bgColor			= { 1.0f, 1.0f, 1.0f, 1.0f };

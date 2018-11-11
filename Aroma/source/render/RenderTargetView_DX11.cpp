@@ -1,13 +1,14 @@
 ﻿//===========================================================================
 //!
-//!	@file		TextureView_DX11.h
-//!	@brief		テクスチャービュー : DirectX11
+//!	@file		RenderTargetView_DX11.h
+//!	@brief		レンダーターゲットビュー : DirectX11
 //!
 //!	@author		Copyright (C) DebugCurry. All rights reserved.
 //!	@author		d0
 //!
 //===========================================================================
-#include <aroma/render/TextureView.h>
+#include <aroma/render/RenderTargetView.h>
+#include <aroma/render/Texture.h>
 #include <aroma/render/Device.h>
 
 namespace aroma {
@@ -16,18 +17,18 @@ namespace render {
 //---------------------------------------------------------------------------
 //! @brief		コンストラクタ.
 //---------------------------------------------------------------------------
-TextureView::TextureView()
+RenderTargetView::RenderTargetView()
 	: _initialized( false )
 	, _device( nullptr )
 	, _texture( nullptr )
-	, _nativeSRV( nullptr )
+	, _nativeRTV( nullptr )
 {
 }
 
 //---------------------------------------------------------------------------
 //! @brief		デストラクタ.
 //---------------------------------------------------------------------------
-TextureView::~TextureView()
+RenderTargetView::~RenderTargetView()
 {
 	Finalize();
 }
@@ -35,7 +36,7 @@ TextureView::~TextureView()
 //---------------------------------------------------------------------------
 //! @brief		初期化.
 //---------------------------------------------------------------------------
-void TextureView::Initialize( Device* device, const Desc& desc )
+void RenderTargetView::Initialize( Device* device, const Desc& desc )
 {
 	if( _initialized )
 	{
@@ -54,31 +55,12 @@ void TextureView::Initialize( Device* device, const Desc& desc )
 
 	HRESULT hr;
 
-	// テクスチャービュー作成.
-	AROMA_ASSERT( CheckFlags( textureDesc.bindFlags, kBindFlagShaderResource ),
-		"There is no kBindFlagShaderResource in texture bind flags." );
+	// レンダーターゲットビュー作成.
+	AROMA_ASSERT( CheckFlags( textureDesc.bindFlags, kBindFlagRenderTarget ),
+		"There is no kBindFlagRenderTarget in texture bind flags." );
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC d3dSRVDesc = {};
-	switch( textureDesc.format )
-	{
-		// 深度フォーマットの場合はカラーフォーマットに変換.
-		case data::PixelFormat::kD32FloatS8X24Uint:
-			d3dSRVDesc.Format	= DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
-			break;
-		case data::PixelFormat::kD32Float:
-			d3dSRVDesc.Format	= DXGI_FORMAT_R32_FLOAT;
-			break;
-		case data::PixelFormat::kD24UnormS8Uint:
-			d3dSRVDesc.Format	= DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-			break;
-		case data::PixelFormat::kD16Unorm:
-			d3dSRVDesc.Format	= DXGI_FORMAT_R16_UNORM;
-			break;
-
-		default:
-			d3dSRVDesc.Format	= ToNativePixelFormat( textureDesc.format );
-			break;
-	}
+	D3D11_RENDER_TARGET_VIEW_DESC d3dRTVDesc = {};
+	d3dRTVDesc.Format	= ToNativePixelFormat( textureDesc.format );
 
 	// TODO: 1D,3D Dimension対応.
 	// TODO: Array対応.
@@ -86,17 +68,15 @@ void TextureView::Initialize( Device* device, const Desc& desc )
 
 	if( textureDesc.multiSampleCount > 1 )
 	{
-		d3dSRVDesc.ViewDimension				= D3D11_SRV_DIMENSION_TEXTURE2DMS;
+		d3dRTVDesc.ViewDimension		= D3D11_RTV_DIMENSION_TEXTURE2DMS;
 	}
 	else
 	{
-		d3dSRVDesc.ViewDimension				= D3D11_SRV_DIMENSION_TEXTURE2D;
-		d3dSRVDesc.Texture2D.MipLevels			= textureDesc.mipCount;
-		d3dSRVDesc.Texture2D.MostDetailedMip	= 0;
+		d3dRTVDesc.ViewDimension		= D3D11_RTV_DIMENSION_TEXTURE2D;
+		d3dRTVDesc.Texture2D.MipSlice	= desc.mipLevel;
 	}
-
-	hr = d3dDevice->CreateShaderResourceView( _texture->GetNativeResource(), &d3dSRVDesc, &_nativeSRV );
-	AROMA_ASSERT( SUCCEEDED( hr ), _T( "Failed to CreateShaderResourceView.\n" ) );
+	hr = d3dDevice->CreateRenderTargetView( _texture->GetNativeResource(), &d3dRTVDesc, &_nativeRTV );
+	AROMA_ASSERT( SUCCEEDED( hr ), _T( "Failed to CreateRenderTargetView.\n" ) );
 
 	_initialized = true;
 }
@@ -104,10 +84,10 @@ void TextureView::Initialize( Device* device, const Desc& desc )
 //---------------------------------------------------------------------------
 //! @brief		解放.
 //---------------------------------------------------------------------------
-void TextureView::Finalize()
+void RenderTargetView::Finalize()
 {
 	if( !_initialized ) return;
-	memory::SafeRelease( _nativeSRV );
+	memory::SafeRelease( _nativeRTV );
 	memory::SafeRelease( _texture );
 	memory::SafeRelease( _device );
 	_desc.Default();
@@ -115,11 +95,11 @@ void TextureView::Finalize()
 }
 
 //---------------------------------------------------------------------------
-//! @brief		ネイティブAPIテクスチャービュー取得.
+//! @brief		ネイティブAPIレンダーターゲットビュー取得.
 //---------------------------------------------------------------------------
-ID3D11ShaderResourceView* TextureView::GetNativeShaderResourceView() const
+ID3D11RenderTargetView*	RenderTargetView::GetNativeRenderTargetView() const
 {
-	return _nativeSRV;
+	return _nativeRTV;
 }
 
 } // namespace render

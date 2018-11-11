@@ -21,7 +21,7 @@ namespace render {
 
 class Device;
 class Texture;
-class TextureView;
+class RenderTargetView;
 
 //---------------------------------------------------------------------------
 //!	@brief		スワップチェイン.
@@ -94,14 +94,14 @@ public:
 	//-----------------------------------------------------------------------
 	//! @brief		 バッファビュー取得.
 	//-----------------------------------------------------------------------
-	void GetBufferView( u32 index, TextureView** outResource ) const;
+	void GetBufferView( u32 index, RenderTargetView** outResource ) const;
 
 private:
 	bool					_initialized;
 	Device*					_device;
 	Desc					_desc;
 	Texture**				_buffers;
-	TextureView**			_bufferViews;
+	RenderTargetView**		_bufferRTVs;
 	u32						_bufferIndex;
 
 #ifdef AROMA_RENDER_DX11

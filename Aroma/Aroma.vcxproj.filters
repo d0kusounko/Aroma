@@ -83,9 +83,6 @@
     <ClCompile Include="source\render\Texture_DX11.cpp">
       <Filter>source\render</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\TextureView_DX11.cpp">
-      <Filter>source\render</Filter>
-    </ClCompile>
     <ClCompile Include="source\render\CommandList_DX11.cpp">
       <Filter>source\render</Filter>
     </ClCompile>
@@ -149,6 +146,15 @@
     <ClCompile Include="source\render\ViewportScissorState.cpp">
       <Filter>source\render</Filter>
     </ClCompile>
+    <ClCompile Include="source\render\DepthStencilView_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\RenderTargetView_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\TextureView_DX11.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Aroma.h">
@@ -191,9 +197,6 @@
       <Filter>include\aroma\render</Filter>
     </ClInclude>
     <ClInclude Include="include\aroma\render\Texture.h">
-      <Filter>include\aroma\render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\aroma\render\TextureView.h">
       <Filter>include\aroma\render</Filter>
     </ClInclude>
     <ClInclude Include="include\aroma\util\NonCopyable.h">
@@ -284,6 +287,15 @@
       <Filter>include\aroma\app</Filter>
     </ClInclude>
     <ClInclude Include="include\aroma\render\ViewportScissorState.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\DepthStencilView.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\RenderTargetView.h">
+      <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\render\TextureView.h">
       <Filter>include\aroma\render</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,7 +1,7 @@
 ﻿//===========================================================================
 //!
 //!	@file		Texture_DX11.h
-//!	@brief		テクスチャ : DirectX11
+//!	@brief		テクスチャー : DirectX11
 //!
 //!	@author		Copyright (C) DebugCurry. All rights reserved.
 //!	@author		d0
@@ -44,7 +44,7 @@ void Texture::Initialize( Device* device, const Desc& desc )
 		Finalize();
 	}
 	// TODO: descの不正値チェック.
-	AROMA_ASSERT( desc.mipLevel > 0, "Invalid desc value.\n" );
+	AROMA_ASSERT( desc.mipCount > 0, "Invalid desc value.\n" );
 
 	_device = device;
 	_device->AddRef();
@@ -56,7 +56,7 @@ void Texture::Initialize( Device* device, const Desc& desc )
 	d3dDesc.Width				= desc.size.width;
 	d3dDesc.Height				= desc.size.height;
 	d3dDesc.ArraySize			= desc.arrayCount;
-	d3dDesc.MipLevels			= desc.mipLevel;
+	d3dDesc.MipLevels			= desc.mipCount;
 	d3dDesc.BindFlags			= ToNativeBindFlags( desc.bindFlags );
 	d3dDesc.CPUAccessFlags		= ToNativeCpuAccessFlag( GetCpuAccessFlags( desc.usage ) );
 	d3dDesc.Format				= ToNativePixelFormat( desc.format );
@@ -67,8 +67,8 @@ void Texture::Initialize( Device* device, const Desc& desc )
 	if( desc.initDataArray )
 	{
 		// 初期データ設定.
-		u32 dataNum = desc.mipLevel * desc.arrayCount;
-		subResource = new D3D11_SUBRESOURCE_DATA[ desc.mipLevel * desc.arrayCount ];
+		u32 dataNum = desc.mipCount * desc.arrayCount;
+		subResource = new D3D11_SUBRESOURCE_DATA[ desc.mipCount * desc.arrayCount ];
 		for( u32 i = 0; i < dataNum; ++i )
 		{
 			subResource[ i ].pSysMem			= desc.initDataArray[ i ].dataConst;
@@ -83,7 +83,7 @@ void Texture::Initialize( Device* device, const Desc& desc )
 }
 
 //---------------------------------------------------------------------------
-//! @brief		ネイティブAPIテクスチャバッファより初期化.
+//! @brief		ネイティブAPIテクスチャーバッファより初期化.
 //---------------------------------------------------------------------------
 void Texture::InitializeFromNativeTexture( Device* device, ID3D11Texture2D* nativeTexture )
 {
@@ -106,7 +106,7 @@ void Texture::InitializeFromNativeTexture( Device* device, ID3D11Texture2D* nati
 		_desc.Default();
 		_desc.size.width		= d3dDesc.Width;
 		_desc.size.height		= d3dDesc.Height;
-		_desc.mipLevel			= d3dDesc.MipLevels;
+		_desc.mipCount			= d3dDesc.MipLevels;
 		_desc.format			= ToAromaPixelFormat( d3dDesc.Format );
 		_desc.usage				= ToAromaUsage( d3dDesc.Usage );
 		_desc.arrayCount		= d3dDesc.ArraySize;

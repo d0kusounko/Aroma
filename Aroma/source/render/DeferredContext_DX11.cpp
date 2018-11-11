@@ -14,6 +14,8 @@
 #include <aroma/render/Device.h>
 #include <aroma/render/Texture.h>
 #include <aroma/render/TextureView.h>
+#include <aroma/render/RenderTargetView.h>
+#include <aroma/render/DepthStencilView.h>
 #include <aroma/render/CommandList.h>
 #include <aroma/render/Shader.h>
 #include <aroma/render/RenderStateCache.h>
@@ -191,7 +193,7 @@ void DeferredContext::End( CommandList** outCommandList )
 //---------------------------------------------------------------------------
 //	レンダーターゲットを指定カラーでクリア.
 //---------------------------------------------------------------------------
-void DeferredContext::ClearRenderTarget( TextureView* rtv, const data::Color& color )
+void DeferredContext::ClearRenderTarget( RenderTargetView* rtv, const data::Color& color )
 {
 	BEGIN_ERROR_CHECK();
 	_d3dContext->ClearRenderTargetView( rtv->GetNativeRenderTargetView(), color.rgba );
@@ -445,7 +447,7 @@ void DeferredContext::PSSetConstantBuffer( u32 slot, Buffer* cb )
 //---------------------------------------------------------------------------
 //	出力先レンダーターゲット設定.
 //---------------------------------------------------------------------------
-void DeferredContext::OMSetRenderTargets( u32 rtvNum, TextureView* const* rtvs, TextureView* dsv )
+void DeferredContext::OMSetRenderTargets( u32 rtvNum, RenderTargetView* const* rtvs, DepthStencilView* dsv )
 {
 	AROMA_ASSERT( rtvNum <= kRenderTargetsSlotMax, _T( "rtvNum is out of range.\n" ) );
 	AROMA_ASSERT( rtvNum >= 1, _T( "The number of render targets to be set must be 1 or more." ) );
@@ -477,7 +479,7 @@ void DeferredContext::OMSetRenderTargets( u32 rtvNum, TextureView* const* rtvs, 
 //---------------------------------------------------------------------------
 //	設定済み出力先レンダーターゲット取得.
 //---------------------------------------------------------------------------
-void DeferredContext::OMGetRenderTargets( u32 count, TextureView** outRTVs ) const
+void DeferredContext::OMGetRenderTargets( u32 count, RenderTargetView** outRTVs ) const
 {
 	if( count > kRenderTargetsSlotMax )
 	{
@@ -493,7 +495,7 @@ void DeferredContext::OMGetRenderTargets( u32 count, TextureView** outRTVs ) con
 //---------------------------------------------------------------------------
 //	設定済み深度ステンシルターゲット取得.
 //---------------------------------------------------------------------------
-TextureView* DeferredContext::OMGetDepthStencilTarget() const
+DepthStencilView* DeferredContext::OMGetDepthStencilTarget() const
 {
 	return _depthStencil;
 }

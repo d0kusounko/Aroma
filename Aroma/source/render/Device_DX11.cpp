@@ -267,7 +267,7 @@ Texture* Device::CreateTexture2DFromDDS( const data::DDSAccessor& dds, Usage usa
 
 	// パラメータ取得.
 	u32					arrayCount	= dds.GetArrayCount();
-	u32					mipMapCount	= dds.GetMipMapCount();
+	u32					mipCount	= dds.GetMipMapCount();
 	data::PixelFormat	format		= dds.GetPixelFormat();
 
 	// エラーチェック.
@@ -280,7 +280,7 @@ Texture* Device::CreateTexture2DFromDDS( const data::DDSAccessor& dds, Usage usa
 		}
 
 		// ミップマップ数がグラフィックスAPIでサポートされていない数の場合エラー.
-		if( mipMapCount > kMipCountMax )
+		if( mipCount > kMipCountMax )
 		{
 			AROMA_ASSERT( false, "This mipmap count is unsupported." ); 
 			return nullptr;
@@ -288,14 +288,14 @@ Texture* Device::CreateTexture2DFromDDS( const data::DDSAccessor& dds, Usage usa
 	}
 
 	// 初期データ作成.
-	SubResource* initData = new SubResource[ mipMapCount * arrayCount ];
+	SubResource* initData = new SubResource[ mipCount * arrayCount ];
 	AROMA_ASSERT( initData, _T( "Failed to memory allocate.\n" ) ); 
 	{
 		u32		idx		= 0;
 		auto	pImg	= dds.GetImageTop();
 
 		for( u32 iArray = 0; iArray < arrayCount; ++iArray )
-		for( u32 iMip = 0; iMip < mipMapCount; iMip++ )
+		for( u32 iMip = 0; iMip < mipCount; iMip++ )
 		{
 			u32	mipWidth  = Max( 1ui32, dds.GetWidth()	>> iMip );
 			u32	mipHeight = Max( 1ui32, dds.GetHeight()	>> iMip );
@@ -313,7 +313,7 @@ Texture* Device::CreateTexture2DFromDDS( const data::DDSAccessor& dds, Usage usa
 	// 2Dテクスチャ作成.
 	Texture::Desc desc;
 	dds.GetImageSize( &desc.size );
-	desc.mipLevel		= mipMapCount;
+	desc.mipCount		= mipCount;
 	desc.format			= format;
 	desc.usage			= usage;
 	desc.arrayCount		= arrayCount;

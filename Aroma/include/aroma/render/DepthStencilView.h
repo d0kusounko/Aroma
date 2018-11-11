@@ -1,7 +1,7 @@
 ﻿//===========================================================================
 //!
-//!	@file		TextureView.h
-//!	@brief		テクスチャビュー.
+//!	@file		DepthStencilView.h
+//!	@brief		深度ステンシルビュー.
 //!
 //!	@author		Copyright (C) DebugCurry. All rights reserved.
 //!	@author		d0
@@ -21,9 +21,9 @@ class Device;
 class Texture;
 
 //---------------------------------------------------------------------------
-//!	@brief	テクスチャビュー.
+//!	@brief	深度ステンシルビュー.
 //---------------------------------------------------------------------------
-class TextureView : public RefObject, public MemoryAllocator, private util::NonCopyable< TextureView >
+class DepthStencilView : public RefObject, public MemoryAllocator, private util::NonCopyable< DepthStencilView >
 {
 public:
 	//-----------------------------------------------------------------------
@@ -31,13 +31,15 @@ public:
 	//-----------------------------------------------------------------------
 	struct Desc
 	{
-		Texture* texture;	//!< テクスチャー.
+		Texture*	texture;	//!< テクスチャ.
+		u32			mipLevel;	//!< ミップレベル.
 
 		//-------------------------------------------------------------------
 		Desc(){ Default(); }
 		void Default()
 		{
-			texture = nullptr;
+			texture		= nullptr;
+			mipLevel	= 0;
 		}
 	};
 
@@ -45,12 +47,12 @@ public:
 	//-----------------------------------------------------------------------
 	//! @brief		コンストラクタ.
 	//-----------------------------------------------------------------------
-	TextureView();
+	DepthStencilView();
 
 	//-----------------------------------------------------------------------
 	//! @brief		デストラクタ.
 	//-----------------------------------------------------------------------
-	virtual ~TextureView();
+	virtual ~DepthStencilView();
 
 	//-----------------------------------------------------------------------
 	//! @brief		初期化.
@@ -63,10 +65,10 @@ public:
 	void Finalize();
 
 	//-----------------------------------------------------------------------
-	//! @brief		ネイティブAPIテクスチャビュー取得.
+	//! @brief		ネイティブAPI深度ステンシルビュー取得.
 	//-----------------------------------------------------------------------
 #ifdef AROMA_RENDER_DX11
-	ID3D11ShaderResourceView* GetNativeShaderResourceView() const;
+	ID3D11DepthStencilView* GetNativeDepthStencilView() const;
 #endif
 
 private:
@@ -76,7 +78,7 @@ private:
 	Texture*					_texture;
 
 #ifdef AROMA_RENDER_DX11
-	ID3D11ShaderResourceView*	_nativeSRV;
+	ID3D11DepthStencilView*		_nativeDSV;
 #endif
 };
 

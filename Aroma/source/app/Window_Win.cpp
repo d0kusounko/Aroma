@@ -26,7 +26,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wp, LPARAM lp )
 	auto window = WindowManager::GetWindow( hWnd );
 	switch( msg )
 	{
-		// M2_TODO: ウィンドウ作成時.
+		// TODO: ウィンドウ作成時.
 		case WM_CREATE:
 		{
 			break;
@@ -64,7 +64,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wp, LPARAM lp )
 					// コールバック.
 					callback->func( nullptr, callback->userParam );
 				}
-			
+
 				if( !CheckFlags( window->GetFlags(), kWindowFlagCloseMessageNotDestory ) )
 				{
 					// ウィンドウを削除.
@@ -73,7 +73,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wp, LPARAM lp )
 			}
 			return 0;	// 自動的に削除しないようにするためreturn
 		}
-		
+
 		// 座標移動時.
 		case WM_MOVE:
 		{
@@ -199,7 +199,7 @@ Window* Window::Create( const CreateConfig& config )
 		AROMA_ASSERT( false, "Failed to get module handle." );
 		return nullptr;
 	}
-	
+
 	// ウィンドウクラス作成.
 	Window* window = new Window( hWnd );
 	{

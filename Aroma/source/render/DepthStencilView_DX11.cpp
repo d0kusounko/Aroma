@@ -1,13 +1,14 @@
 ﻿//===========================================================================
 //!
-//!	@file		TextureView_DX11.h
-//!	@brief		テクスチャービュー : DirectX11
+//!	@file		DepthStencilView_DX11.h
+//!	@brief		深度ステンシルビュー : DirectX11
 //!
 //!	@author		Copyright (C) DebugCurry. All rights reserved.
 //!	@author		d0
 //!
 //===========================================================================
-#include <aroma/render/TextureView.h>
+#include <aroma/render/DepthStencilView.h>
+#include <aroma/render/Texture.h>
 #include <aroma/render/Device.h>
 
 namespace aroma {
@@ -16,18 +17,18 @@ namespace render {
 //---------------------------------------------------------------------------
 //! @brief		コンストラクタ.
 //---------------------------------------------------------------------------
-TextureView::TextureView()
+DepthStencilView::DepthStencilView()
 	: _initialized( false )
 	, _device( nullptr )
 	, _texture( nullptr )
-	, _nativeSRV( nullptr )
+	, _nativeDSV( nullptr )
 {
 }
 
 //---------------------------------------------------------------------------
 //! @brief		デストラクタ.
 //---------------------------------------------------------------------------
-TextureView::~TextureView()
+DepthStencilView::~DepthStencilView()
 {
 	Finalize();
 }
@@ -35,7 +36,7 @@ TextureView::~TextureView()
 //---------------------------------------------------------------------------
 //! @brief		初期化.
 //---------------------------------------------------------------------------
-void TextureView::Initialize( Device* device, const Desc& desc )
+void DepthStencilView::Initialize( Device* device, const Desc& desc )
 {
 	if( _initialized )
 	{
@@ -54,31 +55,12 @@ void TextureView::Initialize( Device* device, const Desc& desc )
 
 	HRESULT hr;
 
-	// テクスチャービュー作成.
-	AROMA_ASSERT( CheckFlags( textureDesc.bindFlags, kBindFlagShaderResource ),
-		"There is no kBindFlagShaderResource in texture bind flags." );
+	// 深度ステンシルビュー作成.
+	AROMA_ASSERT( CheckFlags( textureDesc.bindFlags, kBindFlagDepthStencil ),
+		"There is no kBindFlagDepthStencil in texture bind flags." );
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC d3dSRVDesc = {};
-	switch( textureDesc.format )
-	{
-		// 深度フォーマットの場合はカラーフォーマットに変換.
-		case data::PixelFormat::kD32FloatS8X24Uint:
-			d3dSRVDesc.Format	= DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
-			break;
-		case data::PixelFormat::kD32Float:
-			d3dSRVDesc.Format	= DXGI_FORMAT_R32_FLOAT;
-			break;
-		case data::PixelFormat::kD24UnormS8Uint:
-			d3dSRVDesc.Format	= DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-			break;
-		case data::PixelFormat::kD16Unorm:
-			d3dSRVDesc.Format	= DXGI_FORMAT_R16_UNORM;
-			break;
-
-		default:
-			d3dSRVDesc.Format	= ToNativePixelFormat( textureDesc.format );
-			break;
-	}
+	D3D11_DEPTH_STENCIL_VIEW_DESC d3dDSVDesc = {};
+	d3dDSVDesc.Format	= ToNativePixelFormat( textureDesc.format );
 
 	// TODO: 1D,3D Dimension対応.
 	// TODO: Array対応.
@@ -86,17 +68,17 @@ void TextureView::Initialize( Device* device, const Desc& desc )
 
 	if( textureDesc.multiSampleCount > 1 )
 	{
-		d3dSRVDesc.ViewDimension				= D3D11_SRV_DIMENSION_TEXTURE2DMS;
+		d3dDSVDesc.ViewDimension		= D3D11_DSV_DIMENSION_TEXTURE2DMS;
 	}
 	else
 	{
-		d3dSRVDesc.ViewDimension				= D3D11_SRV_DIMENSION_TEXTURE2D;
-		d3dSRVDesc.Texture2D.MipLevels			= textureDesc.mipCount;
-		d3dSRVDesc.Texture2D.MostDetailedMip	= 0;
+		d3dDSVDesc.ViewDimension		= D3D11_DSV_DIMENSION_TEXTURE2D;
+		d3dDSVDesc.Texture2D.MipSlice	= desc.mipLevel;
 	}
 
-	hr = d3dDevice->CreateShaderResourceView( _texture->GetNativeResource(), &d3dSRVDesc, &_nativeSRV );
-	AROMA_ASSERT( SUCCEEDED( hr ), _T( "Failed to CreateShaderResourceView.\n" ) );
+	hr = d3dDevice->CreateDepthStencilView( _texture->GetNativeResource(), &d3dDSVDesc, &_nativeDSV );
+	AROMA_ASSERT( SUCCEEDED( hr ), _T( "Failed to CreateDepthStencilView.\n" ) );
+
 
 	_initialized = true;
 }
@@ -104,10 +86,10 @@ void TextureView::Initialize( Device* device, const Desc& desc )
 //---------------------------------------------------------------------------
 //! @brief		解放.
 //---------------------------------------------------------------------------
-void TextureView::Finalize()
+void DepthStencilView::Finalize()
 {
 	if( !_initialized ) return;
-	memory::SafeRelease( _nativeSRV );
+	memory::SafeRelease( _nativeDSV );
 	memory::SafeRelease( _texture );
 	memory::SafeRelease( _device );
 	_desc.Default();
@@ -115,11 +97,11 @@ void TextureView::Finalize()
 }
 
 //---------------------------------------------------------------------------
-//! @brief		ネイティブAPIテクスチャービュー取得.
+//! @brief		ネイティブAPI深度ステンシルビュー取得.
 //---------------------------------------------------------------------------
-ID3D11ShaderResourceView* TextureView::GetNativeShaderResourceView() const
+ID3D11DepthStencilView* DepthStencilView::GetNativeDepthStencilView() const
 {
-	return _nativeSRV;
+	return _nativeDSV;
 }
 
 } // namespace render

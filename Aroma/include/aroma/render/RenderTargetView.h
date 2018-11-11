@@ -1,7 +1,7 @@
 ﻿//===========================================================================
 //!
-//!	@file		TextureView.h
-//!	@brief		テクスチャビュー.
+//!	@file		RenderTargetView.h
+//!	@brief		レンダーターゲットビュー.
 //!
 //!	@author		Copyright (C) DebugCurry. All rights reserved.
 //!	@author		d0
@@ -21,9 +21,9 @@ class Device;
 class Texture;
 
 //---------------------------------------------------------------------------
-//!	@brief	テクスチャビュー.
+//!	@brief	レンダーターゲットビュー.
 //---------------------------------------------------------------------------
-class TextureView : public RefObject, public MemoryAllocator, private util::NonCopyable< TextureView >
+class RenderTargetView : public RefObject, public MemoryAllocator, private util::NonCopyable< RenderTargetView >
 {
 public:
 	//-----------------------------------------------------------------------
@@ -31,13 +31,15 @@ public:
 	//-----------------------------------------------------------------------
 	struct Desc
 	{
-		Texture* texture;	//!< テクスチャー.
+		Texture*	texture;	//!< テクスチャ.
+		u32			mipLevel;	//!< ミップレベル.
 
 		//-------------------------------------------------------------------
 		Desc(){ Default(); }
 		void Default()
 		{
-			texture = nullptr;
+			texture		= nullptr;
+			mipLevel	= 0;
 		}
 	};
 
@@ -45,12 +47,12 @@ public:
 	//-----------------------------------------------------------------------
 	//! @brief		コンストラクタ.
 	//-----------------------------------------------------------------------
-	TextureView();
+	RenderTargetView();
 
 	//-----------------------------------------------------------------------
 	//! @brief		デストラクタ.
 	//-----------------------------------------------------------------------
-	virtual ~TextureView();
+	virtual ~RenderTargetView();
 
 	//-----------------------------------------------------------------------
 	//! @brief		初期化.
@@ -63,10 +65,10 @@ public:
 	void Finalize();
 
 	//-----------------------------------------------------------------------
-	//! @brief		ネイティブAPIテクスチャビュー取得.
+	//! @brief		ネイティブAPIレンダーターゲットビュー取得.
 	//-----------------------------------------------------------------------
 #ifdef AROMA_RENDER_DX11
-	ID3D11ShaderResourceView* GetNativeShaderResourceView() const;
+	ID3D11RenderTargetView*	GetNativeRenderTargetView() const;
 #endif
 
 private:
@@ -76,7 +78,7 @@ private:
 	Texture*					_texture;
 
 #ifdef AROMA_RENDER_DX11
-	ID3D11ShaderResourceView*	_nativeSRV;
+	ID3D11RenderTargetView*		_nativeRTV;
 #endif
 };
 
