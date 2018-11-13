@@ -19,23 +19,7 @@ namespace render {
 //---------------------------------------------------------------------------
 struct RasterizerState final
 {
-	//-----------------------------------------------------------------------
-	//!	@brief		ラスタライザーステート設定項目.
-	//-----------------------------------------------------------------------
-	enum class Setting
-	{
-		kFillMode,					//!< FillMode
-		kCullMode,					//!< CullMode
-		kFrontCounterClockwise,		//!< bool
-		kDepthBias,					//!< s32
-		kDepthBiasClamp,			//!< f32
-		kSlopeScaledDepthBias,		//!< f32
-		kDepthClipEnable,			//!< bool
-		kScissorEnable,				//!< bool
-		kMultisampleEnable,			//!< bool
-		kAntialiasedLineEnable,		//!< bool
-	};
-
+	// TODO: RenderStateCacheのkeyと同じ形でビットフィールド化.
 	FillMode	fillMode;				//!< 描画モード.
 	CullMode	cullMode;				//!< カリングモード.
 	bool		frontCounterClockwise;	//!< 左回り前向き判定.
@@ -47,7 +31,7 @@ struct RasterizerState final
 	bool		multisampleEnable;		//!< MSAA有効.
 	bool		antialiasedLineEnable;	//!< 線のアンチエイリアシング有効.
 
-	//-------------------------------------------------------------------
+	//-----------------------------------------------------------------------
 	RasterizerState(){ Default(); }
 	void Default()
 	{
@@ -63,18 +47,28 @@ struct RasterizerState final
 		antialiasedLineEnable	= false;
 	}
 
-	//---------------------------------------------------------------------------
-	//! @brief		ステート設定.
+	//-----------------------------------------------------------------------
+	//! @brief		各ステート設定.
+	//! @param[in]	state	設定するステート項目.
 	//! @param[in]	value	設定する値.
 	//!	@retval		true	: 値が変更された.
 	//! @retval		false	: 値が変更されなかった.
-	//---------------------------------------------------------------------------
-	bool Set( Setting state, bool value );
-	bool Set( Setting state, FillMode value );
-	bool Set( Setting state, CullMode value );
-	bool Set( Setting state, s32 value );
-	bool Set( Setting state, f32 value );
+	//-----------------------------------------------------------------------
+	bool Set( const RasterizerState& value );
+	bool SetFillMode( FillMode value );
+	bool SetCullMode( CullMode value );
+	bool SetFrontCounterClockwise( bool value );
+	bool SetDepthBias( s32 value );
+	bool SetDepthBiasClamp( f32 value );
+	bool SetSlopeScaledDepthBias( f32 value );
+	bool SetDepthClipEnable( bool value );
+	bool SetScissorEnable( bool value );
+	bool SetMultisampleEnable( bool value );
+	bool SetAntialiasedLineEnable( bool value );
 };
+
+
+
 
 } // namespace render
 } // namespace aroma

@@ -546,7 +546,7 @@ void Draw()
 		viewport.h			= static_cast< f32 >( kSampleScreenSize.height );
 		viewport.minDepth	= 0.0f;
 		viewport.maxDepth	= 1.0f;
-		g_context->RSSetViewportScissorState( 0, render::ViewportScissorState::Setting::kViewport, viewport );
+		g_context->RSSetViewportScissorStateViewport( 0, viewport );
 
 		// シザー.
 		render::ScissorRect scissor;
@@ -554,7 +554,7 @@ void Draw()
 		scissor.y = 0;
 		scissor.w = kSampleScreenSize.width;
 		scissor.h = kSampleScreenSize.height;
-		g_context->RSSetViewportScissorState( 0, render::ViewportScissorState::Setting::kScissor, scissor );
+		g_context->RSSetViewportScissorStateScissor( 0, scissor );
 			
 		// レンダーターゲット設定.
 		g_context->OMSetRenderTargets( 1, &currentBackBuffer, nullptr );
@@ -596,33 +596,33 @@ void Draw()
 void DrawSprite( render::DeferredContext* context, Sprite* sprite )
 {
 	// ブレンドステート.
-	context->OMSetBlendState( render::BlendState::Setting::kSampleAlphaToCoverage,	false );
-	context->OMSetBlendState( render::BlendState::Setting::kBlendEnable,			true );
-	context->OMSetBlendState( render::BlendState::Setting::kRGBSource,				render::Blend::kSrcAlp );
-	context->OMSetBlendState( render::BlendState::Setting::kRGBDest,				render::Blend::kInvSrcAlp );
-	context->OMSetBlendState( render::BlendState::Setting::kRGBBlendOp,				render::BlendOp::kAdd );
-	context->OMSetBlendState( render::BlendState::Setting::kAlphaSource,			render::Blend::kSrcAlp );
-	context->OMSetBlendState( render::BlendState::Setting::kAlphaDest,				render::Blend::kInvSrcAlp );
-	context->OMSetBlendState( render::BlendState::Setting::kAlphaBlendOp,			render::BlendOp::kAdd );
-	context->OMSetBlendState( render::BlendState::Setting::kWriteMaskR,				true );
-	context->OMSetBlendState( render::BlendState::Setting::kWriteMaskG,				true );
-	context->OMSetBlendState( render::BlendState::Setting::kWriteMaskB,				true );
-	context->OMSetBlendState( render::BlendState::Setting::kWriteMaskA,				true );
+	context->OMSetBlendStateSampleAlphaToCoverage( false );
+	context->OMSetBlendStateBlendEnable( true );
+	context->OMSetBlendStateRGBSource( render::Blend::kSrcAlp );
+	context->OMSetBlendStateRGBDest( render::Blend::kInvSrcAlp );
+	context->OMSetBlendStateRGBBlendOp( render::BlendOp::kAdd );
+	context->OMSetBlendStateAlphaSource( render::Blend::kSrcAlp );
+	context->OMSetBlendStateAlphaDest( render::Blend::kInvSrcAlp );
+	context->OMSetBlendStateAlphaBlendOp( render::BlendOp::kAdd );
+	context->OMSetBlendStateWriteMaskR( true );
+	context->OMSetBlendStateWriteMaskG( true );
+	context->OMSetBlendStateWriteMaskB( true );
+	context->OMSetBlendStateWriteMaskA( true );
 
 	// ラスタライザーステート.
-	context->RSSetRasterizerState( render::RasterizerState::Setting::kFillMode, render::FillMode::kSolid );
-	context->RSSetRasterizerState( render::RasterizerState::Setting::kCullMode, render::CullMode::kNone );
-	context->RSSetRasterizerState( render::RasterizerState::Setting::kFrontCounterClockwise, true );
-	context->RSSetRasterizerState( render::RasterizerState::Setting::kDepthBias, 0 );
-	context->RSSetRasterizerState( render::RasterizerState::Setting::kDepthBiasClamp, 0.f );
-	context->RSSetRasterizerState( render::RasterizerState::Setting::kSlopeScaledDepthBias, 0.f );
-	context->RSSetRasterizerState( render::RasterizerState::Setting::kDepthClipEnable, true );
-	context->RSSetRasterizerState( render::RasterizerState::Setting::kScissorEnable, false );
-	context->RSSetRasterizerState( render::RasterizerState::Setting::kMultisampleEnable, false );
-	context->RSSetRasterizerState( render::RasterizerState::Setting::kAntialiasedLineEnable, false );
+	context->RSSetRasterizerStateFillMode( render::FillMode::kSolid );
+	context->RSSetRasterizerStateCullMode( render::CullMode::kNone );
+	context->RSSetRasterizerStateFrontCounterClockwise( true );
+	context->RSSetRasterizerStateDepthBias( 0 );
+	context->RSSetRasterizerStateDepthBiasClamp( 0.f );
+	context->RSSetRasterizerStateSlopeScaledDepthBias( 0.f );
+	context->RSSetRasterizerStateDepthClipEnable( true );
+	context->RSSetRasterizerStateScissorEnable( false );
+	context->RSSetRasterizerStateMultisampleEnable( false );
+	context->RSSetRasterizerStateAntialiasedLineEnable( false );
 
 	// 深度ステンシルステート.
-	context->OMSetDepthStencilState( render::DepthStencilState::Setting::kDepthEnable, false );
+	context->OMSetDepthStencilStateDepthEnable( false );
 
 	// ポリゴン描画.
 	{
@@ -657,7 +657,7 @@ void DrawSprite( render::DeferredContext* context, Sprite* sprite )
 			context->PSSetShaderResource( 0, sprite->texView );
 
 			// サンプラーステート.
-			context->PSSetSamplerState( 0, render::SamplerState::Setting::kFilter, render::Filter::kMinMagMipLinear );
+			context->PSSetSamplerStateFilter( 0, render::Filter::kMinMagMipLinear );
 		}
 
 		// 描画.

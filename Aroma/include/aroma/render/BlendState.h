@@ -21,25 +21,7 @@ namespace render {
 //---------------------------------------------------------------------------
 struct BlendState final
 {
-	//-----------------------------------------------------------------------
-	//!	@brief		ブレンドステート設定項目.
-	//-----------------------------------------------------------------------
-	enum class Setting
-	{
-		kSampleAlphaToCoverage,		//!< bool
-		kBlendEnable,				//!< bool
-		kRGBSource,					//!< Blend
-		kRGBDest,					//!< Blend
-		kRGBBlendOp,				//!< BlendOp
-		kAlphaSource,				//!< Blend
-		kAlphaDest,					//!< Blend
-		kAlphaBlendOp,				//!< BlendOp
-		kWriteMaskR,				//!< bool
-		kWriteMaskG,				//!< bool
-		kWriteMaskB,				//!< bool
-		kWriteMaskA,				//!< bool
-	};
-
+	// TODO: RenderStateCacheのkeyと同じ形でビットフィールド化.
 	bool	sampleAlphaToCoverage;
 	bool	blendEnable;
 	Blend	rgbSource;
@@ -53,7 +35,7 @@ struct BlendState final
 	bool	colorMaskB;
 	bool	colorMaskA;
 
-	//-------------------------------------------------------------------
+	//-----------------------------------------------------------------------
 	BlendState(){ Default(); }
 	void Default()
 	{
@@ -71,15 +53,19 @@ struct BlendState final
 		colorMaskA				= true;
 	}
 
-	//---------------------------------------------------------------------------
-	//! @brief		ステート設定.
-	//! @param[in]	value	設定する値.
-	//!	@retval		true	: 値が変更された.
-	//! @retval		false	: 値が変更されなかった.
-	//---------------------------------------------------------------------------
-	bool Set( Setting state, bool value );
-	bool Set( Setting state, Blend value );
-	bool Set( Setting state, BlendOp value );
+	bool Set( const BlendState& value );
+	bool SetSampleAlphaToCoverage( bool value );
+	bool SetBlendEnable( bool value );
+	bool SetRGBSource( Blend value );
+	bool SetRGBDest( Blend value );
+	bool SetRGBBlendOp( BlendOp value );
+	bool SetAlphaSource( Blend value );
+	bool SetAlphaDest( Blend value );
+	bool SetAlphaBlendOp( BlendOp value );
+	bool SetWriteMaskR( bool value );
+	bool SetWriteMaskG( bool value );
+	bool SetWriteMaskB( bool value );
+	bool SetWriteMaskA( bool value );
 };
 
 } // namespace render

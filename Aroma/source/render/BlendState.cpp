@@ -12,135 +12,80 @@
 namespace aroma {
 namespace render {
 
-//---------------------------------------------------------------------------
-//! @brief		ステート設定.
-//! @param[in]	value	設定する値.
-//!	@retval		true	: 値が変更された.
-//! @retval		false	: 値が変更されなかった.
-//---------------------------------------------------------------------------
-bool BlendState::Set( Setting state, bool value )
+namespace
 {
-	switch( state )
+	template< typename T >
+	bool __SetValue( T& lhs, const T& rhs )
 	{
-	case Setting::kSampleAlphaToCoverage:
-		if( sampleAlphaToCoverage != value )
+		if( lhs != rhs )
 		{
-			sampleAlphaToCoverage = value;
+			lhs = rhs;
 			return true;
 		}
-		break;
-	case Setting::kBlendEnable:
-		if( blendEnable != value )
-		{
-			blendEnable = value;
-			return true;
-		}
-		break;
-	case Setting::kWriteMaskR:
-		if( colorMaskR != value )
-		{
-			colorMaskR = value;
-			return true;
-		}
-		break;
-	case Setting::kWriteMaskG:
-		if( colorMaskG != value )
-		{
-			colorMaskG = value;
-			return true;
-		}
-		break;
-	case Setting::kWriteMaskB:
-		if( colorMaskB != value )
-		{
-			colorMaskB = value;
-			return true;
-		}
-		break;
-	case Setting::kWriteMaskA:
-		if( colorMaskA != value )
-		{
-			colorMaskA = value;
-			return true;
-		}
-		break;
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
+		return false;
 	}
+} // namespace
 
-	return false;
+// TODO: 各ステータス値の正規チェックを行う.
+
+bool BlendState::Set( const BlendState& value )
+{
+	bool diff = memcmp( this, &value, sizeof( BlendState ) ) ? true : false;
+	if( diff )
+	{
+		*this = value;
+	}
+	return diff;
 }
 
-bool BlendState::Set( Setting state, Blend value )
+bool BlendState::SetSampleAlphaToCoverage( bool value )
 {
-	switch( state )
-	{
-	case Setting::kRGBSource:
-		if( rgbSource != value )
-		{
-			rgbSource = value;
-			return true;
-		}
-		break;
-	case Setting::kRGBDest:
-		if( rgbDest != value )
-		{
-			rgbDest = value;
-			return true;
-		}
-		break;
-	case Setting::kAlphaSource:
-		if( alphaSource != value )
-		{
-			alphaSource = value;
-			return true;
-		}
-		break;
-	case Setting::kAlphaDest:
-		if( alphaDest != value )
-		{
-			alphaDest = value;
-			return true;
-		}
-		break;
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
+	return __SetValue( sampleAlphaToCoverage, value );
 }
-
-bool BlendState::Set( Setting state, BlendOp value )
+bool BlendState::SetBlendEnable( bool value )
 {
-	switch( state )
-	{
-	case Setting::kRGBBlendOp:
-		if( rgbBlendOp != value )
-		{
-			rgbBlendOp = value;
-			return true;
-		}
-		break;
-	case Setting::kAlphaBlendOp:
-		if( alphaBlendOp != value )
-		{
-			alphaBlendOp = value;
-			return true;
-		}
-		break;
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
+	return __SetValue( blendEnable, value );
 }
-
+bool BlendState::SetRGBSource( Blend value )
+{
+	return __SetValue( rgbSource, value );
+}
+bool BlendState::SetRGBDest( Blend value )
+{
+	return __SetValue( rgbDest, value );
+}
+bool BlendState::SetRGBBlendOp( BlendOp value )
+{
+	return __SetValue( rgbBlendOp, value );
+}
+bool BlendState::SetAlphaSource( Blend value )
+{
+	return __SetValue( alphaSource, value );
+}
+bool BlendState::SetAlphaDest( Blend value )
+{
+	return __SetValue( alphaDest, value );
+}
+bool BlendState::SetAlphaBlendOp( BlendOp value )
+{
+	return __SetValue( alphaBlendOp, value );
+}
+bool BlendState::SetWriteMaskR( bool value )
+{
+	return __SetValue( colorMaskR, value );
+}
+bool BlendState::SetWriteMaskG( bool value )
+{
+	return __SetValue( colorMaskG, value );
+}
+bool BlendState::SetWriteMaskB( bool value )
+{
+	return __SetValue( colorMaskB, value );
+}
+bool BlendState::SetWriteMaskA( bool value )
+{
+	return __SetValue( colorMaskA, value );
+}
 
 } // namespace render
 } // namespace aroma

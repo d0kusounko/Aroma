@@ -20,22 +20,7 @@ namespace render {
 //---------------------------------------------------------------------------
 struct SamplerState final
 {
-	//-----------------------------------------------------------------------
-	//!	@brief		サンプラーステート設定項目.
-	//-----------------------------------------------------------------------
-	enum class Setting
-	{
-		kFilter,			//!< Filter
-		kAddressU,			//!< TextureAddress
-		kAddressV,			//!< TextureAddress
-		kAddressW,			//!< TextureAddress
-		kMipLODBias,		//!< f32
-		kMaxAnisotropy,		//!< AnisotropicRatio
-		kBorderColor,		//!< data::Color
-		kMinLOD,			//!< f32
-		kMaxLOD,			//!< f32
-	};
-
+	// TODO: RenderStateCacheのkeyと同じ形でビットフィールド化.
 	Filter					filter;
 	TextureAddress			addressU;
 	TextureAddress			addressV;
@@ -46,7 +31,7 @@ struct SamplerState final
 	f32						minLOD;
 	f32						maxLOD;
 
-	//-------------------------------------------------------------------
+	//-----------------------------------------------------------------------
 	SamplerState(){ Default(); }
 	void Default()
 	{
@@ -61,17 +46,22 @@ struct SamplerState final
 		maxLOD			= AROMA_FLT32_MAX;
 	}
 
-	//---------------------------------------------------------------------------
-	//! @brief		ステート設定.
+	//-----------------------------------------------------------------------
+	//! @brief		各ステート設定.
 	//! @param[in]	value	設定する値.
 	//!	@retval		true	: 値が変更された.
 	//! @retval		false	: 値が変更されなかった.
-	//---------------------------------------------------------------------------
-	bool Set( Setting state, f32 value );
-	bool Set( Setting state, Filter value );
-	bool Set( Setting state, TextureAddress value );
-	bool Set( Setting state, AnisotropicRatio value );
-	bool Set( Setting state, const data::Color& value );
+	//-----------------------------------------------------------------------
+	bool Set( const SamplerState& value );
+	bool SetFilter( Filter value );
+	bool SetAddressU( TextureAddress value );
+	bool SetAddressV( TextureAddress value );
+	bool SetAddressW( TextureAddress value );
+	bool SetMipLODBias( f32 value );
+	bool SetMaxAnisotropy( AnisotropicRatio value );
+	bool SetBorderColor( const data::Color& value );
+	bool SetMinLOD( f32 value );
+	bool SetMaxLOD( f32 value );
 };
 
 } // namespace render

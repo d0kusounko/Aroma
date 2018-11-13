@@ -12,145 +12,71 @@
 namespace aroma {
 namespace render {
 
-//---------------------------------------------------------------------------
-//! @brief		ステート設定.
-//! @param[in]	value	設定する値.
-//!	@retval		true	: 値が変更された.
-//! @retval		false	: 値が変更されなかった.
-//---------------------------------------------------------------------------
-bool RasterizerState::Set( Setting state, bool value )
+namespace
 {
-	switch( state )
+	template< typename T >
+	bool __SetValue( T& lhs, const T& rhs )
 	{
-	case Setting::kFrontCounterClockwise:
-		if( frontCounterClockwise != value )
+		if( lhs != rhs )
 		{
-			frontCounterClockwise = value;
+			lhs = rhs;
 			return true;
 		}
-		break;
-	case Setting::kDepthClipEnable:
-		if( depthClipEnable != value )
-		{
-			depthClipEnable = value;
-			return true;
-		}
-		break;
-	case Setting::kScissorEnable:
-		if( scissorEnable != value )
-		{
-			scissorEnable = value;
-			return true;
-		}
-		break;
-	case Setting::kMultisampleEnable:
-		if( multisampleEnable != value )
-		{
-			multisampleEnable = value;
-			return true;
-		}
-		break;
-	case Setting::kAntialiasedLineEnable:
-		if( antialiasedLineEnable != value )
-		{
-			antialiasedLineEnable = value;
-			return true;
-		}
-		break;
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
+		return false;
 	}
+} // namespace
 
-	return false;
+// TODO: 各ステータス値の正規チェックを行う.
+
+bool RasterizerState::Set( const RasterizerState& value )
+{
+	bool diff = memcmp( this, &value, sizeof( RasterizerState ) ) ? true : false;
+	if( diff )
+	{
+		*this = value;
+	}
+	return diff;
 }
 
-bool RasterizerState::Set( Setting state, FillMode value )
+bool RasterizerState::SetFillMode( FillMode value )
 {
-	switch( state )
-	{
-	case Setting::kFillMode:
-		if( fillMode != value )
-		{
-			fillMode = value;
-			return true;
-		}
-		break;
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
+	return __SetValue( fillMode, value );
 }
-
-bool RasterizerState::Set( Setting state, CullMode value )
+bool RasterizerState::SetCullMode( CullMode value )
 {
-	switch( state )
-	{
-	case Setting::kCullMode:
-		if( cullMode != value )
-		{
-			cullMode = value;
-			return true;
-		}
-		break;
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
+	return __SetValue( cullMode, value );
 }
-
-bool RasterizerState::Set( Setting state, s32 value )
+bool RasterizerState::SetFrontCounterClockwise( bool value )
 {
-	switch( state )
-	{
-	case Setting::kDepthBias:
-		if( depthBias != value )
-		{
-			depthBias = value;
-			return true;
-		}
-		break;
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
+	return __SetValue( frontCounterClockwise, value );
 }
-
-bool RasterizerState::Set( Setting state, f32 value )
+bool RasterizerState::SetDepthBias( s32 value )
 {
-	switch( state )
-	{
-	case Setting::kDepthBiasClamp:
-		if( depthBiasClamp != value )
-		{
-			depthBiasClamp = value;
-			return true;
-		}
-		break;
-	case Setting::kSlopeScaledDepthBias:
-		if( slopeScaledDepthBias != value )
-		{
-			slopeScaledDepthBias = value;
-			return true;
-		}
-		break;
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
+	return __SetValue( depthBias, value );
+}
+bool RasterizerState::SetDepthBiasClamp( f32 value )
+{
+	return __SetValue( depthBiasClamp, value );
+}
+bool RasterizerState::SetSlopeScaledDepthBias( f32 value )
+{
+	return __SetValue( slopeScaledDepthBias, value );
+}
+bool RasterizerState::SetDepthClipEnable( bool value )
+{
+	return __SetValue( depthClipEnable, value );
+}
+bool RasterizerState::SetScissorEnable( bool value )
+{
+	return __SetValue( scissorEnable, value );
+}
+bool RasterizerState::SetMultisampleEnable( bool value )
+{
+	return __SetValue( multisampleEnable, value );
+}
+bool RasterizerState::SetAntialiasedLineEnable( bool value )
+{
+	return __SetValue( antialiasedLineEnable, value );
 }
 
 } // namespace render

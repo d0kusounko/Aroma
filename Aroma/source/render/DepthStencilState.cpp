@@ -12,87 +12,92 @@
 namespace aroma {
 namespace render {
 
-#define STATE_CASE_SET( _setting, _m_Value )	\
-	case Setting::_setting:						\
-		if( _m_Value != value )					\
-		{										\
-			_m_Value = value;					\
-			return true;						\
-		}										\
-		break;									\
-
-//---------------------------------------------------------------------------
-//! @brief		ステート設定.
-//! @param[in]	value	設定する値.
-//!	@retval		true	: 値が変更された.
-//! @retval		false	: 値が変更されなかった.
-//---------------------------------------------------------------------------
-bool DepthStencilState::Set( Setting state, bool value )
+namespace
 {
-	switch( state )
+	template< typename T >
+	bool __SetValue( T& lhs, const T& rhs )
 	{
-	STATE_CASE_SET( kDepthEnable, depthEnable );
-	STATE_CASE_SET( kDepthWrite, depthWrite );
-	STATE_CASE_SET( kStencilEnable, stencilEnable );
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
+		if( lhs != rhs )
+		{
+			lhs = rhs;
+			return true;
+		}
+		return false;
 	}
+} // namespace
 
-	return false;
+// TODO: 各ステータス値の正規チェックを行う.
+
+bool DepthStencilState::Set( const DepthStencilState& value )
+{
+	bool diff = memcmp( this, &value, sizeof( DepthStencilState ) ) ? true : false;
+	if( diff )
+	{
+		*this = value;
+	}
+	return diff;
 }
 
-bool DepthStencilState::Set( Setting state, ComparisonFunc value )
+bool DepthStencilState::SetDepthEnable( bool value )
 {
-	switch( state )
-	{
-	STATE_CASE_SET( kDepthFunc, depthFunc );
-	STATE_CASE_SET( kFrontFaceStencilFunc, frontFaceStencilFunc );
-	STATE_CASE_SET( kBackFaceStencilFunc, backFaceStencilFunc );
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
+	return __SetValue( depthEnable, value );
 }
-
-bool DepthStencilState::Set( Setting state, u8 value )
+bool DepthStencilState::SetDepthWrite( bool value )
 {
-	switch( state )
-	{
-	STATE_CASE_SET( kStencilReadMask, stencilReadMask );
-	STATE_CASE_SET( kStencilWriteMask, stencilWriteMask );
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
+	return __SetValue( depthWrite, value );
 }
-
-bool DepthStencilState::Set( Setting state, StencilOp value )
+bool DepthStencilState::SetDepthFunc( ComparisonFunc value )
 {
-	switch( state )
-	{
-	STATE_CASE_SET( kFrontFaceStencilFailOp, frontFaceStencilFailOp );
-	STATE_CASE_SET( kFrontFaceStencilDepthFailOp, frontFaceStencilDepthFailOp );
-	STATE_CASE_SET( kFrontFaceStencilPassOp, frontFaceStencilPassOp );
-	STATE_CASE_SET( kBackFaceStencilFailOp, backFaceStencilFailOp );
-	STATE_CASE_SET( kBackFaceStencilDepthFailOp, backFaceStencilDepthFailOp );
-	STATE_CASE_SET( kBackFaceStencilPassOp, backFaceStencilPassOp );
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
+	return __SetValue( depthFunc, value );
 }
-
+bool DepthStencilState::SetStencilEnable( bool value )
+{
+	return __SetValue( stencilEnable, value );
+}
+bool DepthStencilState::SetStencilReadMask( u8 value )
+{
+	return __SetValue( stencilReadMask, value );
+}
+bool DepthStencilState::SetStencilWriteMask( u8 value )
+{
+	return __SetValue( stencilWriteMask, value );
+}
+bool DepthStencilState::SetFrontFaceStencilFailOp( StencilOp value )
+{
+	return __SetValue( frontFaceStencilFailOp, value );
+}
+bool DepthStencilState::SetFrontFaceStencilDepthFailOp( StencilOp value )
+{
+	return __SetValue( frontFaceStencilDepthFailOp, value );
+}
+bool DepthStencilState::SetFrontFaceStencilPassOp( StencilOp value )
+{
+	return __SetValue( frontFaceStencilPassOp, value );
+}
+bool DepthStencilState::SetFrontFaceStencilFunc( ComparisonFunc value )
+{
+	return __SetValue( frontFaceStencilFunc, value );
+}
+bool DepthStencilState::SetBackFaceStencilFailOp( StencilOp value )
+{
+	return __SetValue( backFaceStencilFailOp, value );
+}
+bool DepthStencilState::SetBackFaceStencilDepthFailOp( StencilOp value )
+{
+	return __SetValue( backFaceStencilDepthFailOp, value );
+}
+bool DepthStencilState::SetBackFaceStencilPassOp( StencilOp value )
+{
+	return __SetValue( backFaceStencilPassOp, value );
+}
+bool DepthStencilState::SetBackFaceStencilFunc( ComparisonFunc value )
+{
+	return __SetValue( backFaceStencilFunc, value );
+}
+bool DepthStencilState::SetStencilRef( u32 value )
+{
+	return __SetValue( stencilRef, value );
+}
 
 } // namespace render
 } // namespace aroma

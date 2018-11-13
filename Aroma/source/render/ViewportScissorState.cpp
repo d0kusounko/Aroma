@@ -12,59 +12,54 @@
 namespace aroma {
 namespace render {
 
-#define STATE_CASE_SET( _setting, _m_Value )	\
-	case Setting::_setting:						\
-		if( _m_Value != value )					\
-		{										\
-			_m_Value = value;					\
-			return true;						\
-		}										\
-		break;									\
+#ifndef __SLOT_OUT_RANGE_CHECK
+#define __SLOT_OUT_RANGE_CHECK( _slot_ )						\
+	if( _slot_ >= kViewportsSlotMax )							\
+	{															\
+		AROMA_ASSERT( false, _T( "Slot is out of range.\n" ) );	\
+		return false;											\
+	}
+#endif
 
-//---------------------------------------------------------------------------
-//	ステート設定.
-//---------------------------------------------------------------------------
-bool ViewportScissorState::Set( u32 slot, Setting state, const Viewport& value )
+namespace
 {
-	if( slot >= kViewportsSlotMax )
+	template< typename T >
+	bool __SetValue( T& lhs, const T& rhs )
 	{
-		AROMA_ASSERT( false, _T( "Slot is out of range.\n" ) );
+		if( lhs != rhs )
+		{
+			lhs = rhs;
+			return true;
+		}
 		return false;
 	}
+} // namespace
 
-	switch( state )
-	{
-	STATE_CASE_SET( kViewport, viewport[ slot ] );
+// TODO: 各ステータス値の正規チェックを行う.
 
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
-}
-
-bool ViewportScissorState::Set( u32 slot, Setting state, const ScissorRect& value )
+bool ViewportScissorState::Set( const ViewportScissorState& value )
 {
-	if( slot >= kViewportsSlotMax )
+	bool diff = memcmp( this, &value, sizeof( ViewportScissorState ) ) ? true : false;
+	if( diff )
 	{
-		AROMA_ASSERT( false, _T( "Slot is out of range.\n" ) );
-		return false;
+		*this = value;
 	}
-
-	switch( state )
-	{
-	STATE_CASE_SET( kScissor, scissor[ slot ] );
-
-	default:
-		AROMA_ASSERT( false, "There is no state corresponding to type." );
-		break;
-	}
-
-	return false;
+	return diff;
 }
 
+bool ViewportScissorState::SetViewport( u32 slot, const Viewport& value )
+{
+	__SLOT_OUT_RANGE_CHECK( slot );
+	return __SetValue( viewport[ slot ], value );
+}
+bool ViewportScissorState::SetScissor( u32 slot, const ScissorRect& value )
+{
+	__SLOT_OUT_RANGE_CHECK( slot );
+	return __SetValue( scissor[ slot ], value );
+}
 
 } // namespace render
 } // namespace aroma
+
+
 
