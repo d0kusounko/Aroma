@@ -54,6 +54,9 @@
     <Filter Include="source\file">
       <UniqueIdentifier>{2b29c017-56d3-42f1-8901-997526e74dc2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\aroma\file">
+      <UniqueIdentifier>{ee90491b-595e-4db8-9c5d-cd3e9152218a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\render\Render.cpp">
@@ -238,9 +241,6 @@
     <ClInclude Include="include\aroma\render\DepthStencilState.h">
       <Filter>include\aroma\render</Filter>
     </ClInclude>
-    <ClInclude Include="include\aroma\file\FileIO.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\aroma\data\String.h">
       <Filter>include\aroma\data</Filter>
     </ClInclude>
@@ -297,6 +297,9 @@
     </ClInclude>
     <ClInclude Include="include\aroma\render\TextureView.h">
       <Filter>include\aroma\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\aroma\file\FileIO.h">
+      <Filter>include\aroma\file</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
